@@ -32,7 +32,7 @@ typedef struct {
     ServerConnection* serverConn;
 
     HANDLE hConnectThread;
-    ConnectArgs* args;
+    ConnectArgs args;
 
 }ServerConnectDlgData;
 

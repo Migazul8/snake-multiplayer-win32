@@ -38,6 +38,8 @@ typedef struct{
     int foodX;
     int foodY;
 
+    uint64_t playerListLenght;
+
 }GameInstance;
 
 typedef struct {

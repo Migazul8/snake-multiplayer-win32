@@ -5,7 +5,7 @@ DWORD WINAPI ServerConnectThreadEntry(ServerConnectArgs* args) {
     args->serverConn->clientSocket = INVALID_SOCKET;
     args->serverConn->clientSocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if(args->serverConn->clientSocket == INVALID_SOCKET) {
-        SendMessageW(hWnd, WM_SERVERCONNECTDONE, 1, 0);
+        SendMessageW(args->hWnd, WM_SERVERCONNECTDONE, 1, WSAGetLastError());
         return 1;
     }
 
@@ -14,9 +14,26 @@ DWORD WINAPI ServerConnectThreadEntry(ServerConnectArgs* args) {
 
     GamePacket gp;
     initPacket(&gp, GP_SERVERINFO);
+    if(sendto(args->serverConn->clientSocket, &gp, sizeof(GamePacket), 0, &args->serverConn->addr, sizeof(SOCKADDR_IN)) == SOCKET_ERROR) {
+        SendMessageW(args->hWnd, WM_SERVERCONNECTDONE, 2, WSAGetLastError());
+        goto endCloseSocket;
+    }
 
     ServerInfoPacket sip;
-    recvfrom(args->serverConn->clientSocket, &sip, sizeof(ServerInfoPacket), 0, NULL, NULL);
+    if(recvfrom(args->serverConn->clientSocket, &sip, sizeof(ServerInfoPacket), 0, NULL, NULL) == SOCKET_ERROR) {
+        SendMessageW(args->hWnd, WM_SERVERCONNECTDONE, 3, WSAGetLastError());
+        goto endCloseSocket;
+    }
+    if(!isPacketValid(&sip.gp) || sip.gp.type != GP_SERVERINFO) {
+        SendMessageW(args->hWnd, WM_SERVERCONNECTDONE, 4, 0);
+        goto endCloseSocket;
+    }
+
+    SendMessageW(args->hWnd, WM_SERVERCONNECTDONE, 0, &sip);
+
+    endCloseSocket:
+
+    closesocket(args->serverConn->clientSocket);
 
     return 0;
 

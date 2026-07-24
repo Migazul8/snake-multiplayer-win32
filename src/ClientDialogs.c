@@ -8,6 +8,8 @@ static WCHAR ipText[32];
 extern HINSTANCE hInstance;
 extern HANDLE hHeap;
 
+//TODO: USE STRINGS FROM RESOURCES
+
 INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     ServerConnectDlgData* dlgData = (ServerConnectDlgData*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
@@ -21,28 +23,90 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
             SetWindowLongPtrW(hWnd, GWLP_USERDATA, dlgData);
 
+            dlgData->args.hWnd = hWnd;
+            dlgData->args.serverConn = dlgData->serverConn;
+
             return TRUE;
+
+        case WM_SHOWWINDOW:
+            if(wParam == TRUE && lParam == 0) {
+                dlgData->hConnectThread = CreateThread(NULL, 0, ServerConnectThreadEntry, &dlgData->args, 0, NULL);
+                return TRUE;
+            }
+            return FALSE;
 
         case WM_COMMAND:
             switch(LOWORD(wParam)) {
                 case IDCANCEL:
+                    //TODO: CANCEL CONNECTION
                     EndDialog(hWnd, IDCANCEL);
                     return TRUE;
             }
             break;
 
-        case WM_SERVERCONNECTDONE:
+        case WM_SERVERCONNECTDONE: {
+            ShowWindow(GetDlgItem(hWnd, 130), SW_HIDE);
+            WCHAR buffer[512];
             switch(wParam) {
                 case 0:
-                    break;
+
+                    EnableWindow(GetDlgItem(hWnd, 101), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 103), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 201), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 202), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, IDOK), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 102), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 203), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 204), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 205), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 105), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 104), TRUE);
+
+                    return TRUE;
+
                 case 1:
+                    swprintf_s(buffer, 512, L"Error %d while creating socket", (int)lParam);
+                    MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
                     break;
+
                 case 2:
+                    swprintf_s(buffer, 512, L"Error %d while sending request", (int)lParam);
+                    MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
+                    break;
+
+                case 3:
+                    if(lParam == WSAETIMEDOUT) {
+                        MessageBoxW(hWnd, L"Timeout while waiting for server response", appName, MB_ICONERROR);
+                    }else{
+                        switch(lParam) {
+                            case 10054:
+                                MessageBoxW(hWnd, L"The remote computer closed the connection.\nCheck the IP address and port introduced and try again later.", appName, MB_ICONERROR);
+                                break;
+
+                            case WSAEMSGSIZE:
+                                MessageBoxW(hWnd, L"Invalid response", appName, MB_ICONERROR);
+                                break;
+
+                            default:
+                                swprintf_s(buffer, 512, L"Error %d while receiving server response", (int)lParam);
+                                MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
+                                break;
+
+                        }
+                    }
+                    break;
+
+                case 4:
+                    MessageBoxW(hWnd, L"Invalid server response", appName, MB_ICONERROR);
                     break;
 
 
             }
+
+            EndDialog(hWnd, IDCANCEL);
             return TRUE;
+
+        }
 
         case WM_DESTROY:
             HeapFree(hHeap, 0, dlgData);

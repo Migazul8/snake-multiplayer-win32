@@ -75,8 +75,11 @@ typedef struct {
 
 typedef struct {
 
-    GamePacket gp,
+    GamePacket gp;
 
     USHORT port;
 
 }LanPeekAnswer;
+
+void initPacket(GamePacket* gp, int32_t packetType);
+bool isPacketValid(GamePacket* gp);
