@@ -8,6 +8,13 @@ static WCHAR ipText[32];
 extern HINSTANCE hInstance;
 extern HANDLE hHeap;
 
+extern bool isModernDPISupported;
+
+extern pGetDpiForWindow GetDpiForWindowPtr;
+extern pAdjustWindowRectExForDpi AdjustWindowRectExForDpiPtr;
+extern pSystemParametersInfoForDpi SystemParametersInfoForDpiPtr;
+extern pGetSystemMetricsForDpi GetSystemMetricsForDpiPtr;
+
 //TODO: USE STRINGS FROM RESOURCES
 
 INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -134,15 +141,25 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 
             SendDlgItemMessageW(hWnd, 112, EM_SETCUEBANNER, TRUE, (LPARAM)L"29349");
 
+            UINT dpi;
+
+            if(isModernDPISupported) {
+                dpi = GetDpiForWindowPtr(hWnd);
+            }else{
+                HDC hScreen = GetDC(NULL);
+                dpi = GetDeviceCaps(hScreen, LOGPIXELSX);
+                ReleaseDC(NULL, hScreen);
+            }
+
             LVCOLUMNW col = {};
                 col.mask = LVCF_TEXT | LVCF_WIDTH;
                 col.pszText = ipText;
-                col.cx = 200;
+                col.cx = MulDiv(110, dpi, USER_DEFAULT_SCREEN_DPI);;
             SendDlgItemMessageW(hWnd, 110, LVM_INSERTCOLUMNW, 0, (LPARAM)&col);
 
                 col.mask = LVCF_TEXT | LVCF_WIDTH;
                 col.pszText = portText;
-                col.cx = 100;
+                col.cx = MulDiv(55, dpi, USER_DEFAULT_SCREEN_DPI);
             SendDlgItemMessageW(hWnd, 110, LVM_INSERTCOLUMNW, 1, (LPARAM)&col);
 
             SetTimer(hWnd, 10, 3000, NULL);

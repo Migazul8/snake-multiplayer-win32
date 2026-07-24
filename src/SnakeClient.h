@@ -17,7 +17,6 @@ typedef struct {
 
 }ServerConnection;
 
-
 typedef struct{
 
     ServerConnection serverConn;
@@ -51,3 +50,8 @@ typedef struct {
 }ServerConnectArgs;
 
 DWORD WINAPI ServerConnectThreadEntry(ServerConnectArgs*);
+
+typedef UINT (WINAPI* pGetDpiForWindow)(HWND hWnd);
+typedef BOOL (WINAPI* pAdjustWindowRectExForDpi)(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi);
+typedef BOOL (WINAPI* pSystemParametersInfoForDpi)(UINT uiAction, UINT uiParam, PVOID pvParam, UINT fWinIni, UINT dpi);
+typedef int (WINAPI* pGetSystemMetricsForDpi)(int nIndex, UINT dpi);

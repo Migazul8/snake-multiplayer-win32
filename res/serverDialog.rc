@@ -1,28 +1,41 @@
-1 DIALOGEX 0, 0, 210, 166
+IDD_CREATESERVER DIALOGEX 0, 0, 357, 180
 STYLE DS_CENTER | WS_POPUP | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_BORDER | DS_SETFONT
 EXSTYLE WS_EX_CONTROLPARENT
-CAPTION "Snake Server - Crear partida"
+CAPTION "Snake Server - Create game"
 FONT 9, "Segoe UI"
-LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
+LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 BEGIN
 
-    CONTROL "Opciones del servidor", -1, "Button", BS_GROUPBOX, 12, 6, 186, 60
+    CONTROL "Server options", -1, "Button", BS_GROUPBOX, 12, 6, 135, 55
 
-    CONTROL "Puerto:", -1, "Static", SS_LEFT, 24, 20, 50, 9
+    CONTROL "Port:", -1, "Static", SS_LEFT, 24, 20, 50, 9
     CONTROL "29349", 101, "Edit", WS_TABSTOP | ES_NUMBER, 106, 20, 28, 12, WS_EX_CLIENTEDGE
 
-    CONTROL "Opciones de la partida", -1, "Button", BS_GROUPBOX, 12, 72, 186, 60
-    CONTROL "Nombre:", -1, "Static", 0, 24, 84, 40, 9
-    CONTROL "Servidor Snake", 103, "Edit", SS_RIGHT | WS_TABSTOP | WS_GROUP | ES_AUTOHSCROLL, 70, 84, 110, 12, WS_EX_CLIENTEDGE
+    CONTROL "Show server in &LAN searches", 104, "Button", BS_AUTOCHECKBOX, 24, 40, 110, 9
 
-    CONTROL "Mostrar servidor en búsquedas &LAN", 104, "Button", BS_AUTOCHECKBOX, 24, 45, 150, 9
 
-    CONTROL "Máximo de jugadores:", -1, "Static", 0, 24, 102, 80, 9
-    CONTROL "", -1, "Edit", ES_NUMBER | ES_RIGHT | WS_TABSTOP | WS_GROUP, 150, 102, 30, 12, WS_EX_CLIENTEDGE
+    CONTROL "Game options", -1, "Button", BS_GROUPBOX, 159, 6, 186, 140
+
+    CONTROL "Name:", -1, "Static", 0, 171, 20, 40, 9
+    CONTROL "Snake Game Server", 103, "Edit", SS_RIGHT | WS_TABSTOP | WS_GROUP | ES_AUTOHSCROLL, 223, 20, 110, 12, WS_EX_CLIENTEDGE
+
+    CONTROL "Maximum players:", -1, "Static", SS_LEFT, 171, 40, 80, 9
+    CONTROL "", -1, "Edit", ES_NUMBER | ES_RIGHT | WS_TABSTOP | WS_GROUP, 303, 40, 30, 12, WS_EX_CLIENTEDGE
     CONTROL "", 102, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
 
-    CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_GROUP, 96, 142, 48, 14
-    CONTROL "&Cancelar", IDCANCEL, "Button", BS_PUSHBUTTON, 150, 142, 48, 14
+    CONTROL "Grid width:", -1, "Static", SS_LEFT, 171, 60, 50, 9
+
+    CONTROL "Grid height:", -1, "Static", SS_LEFT, 171, 80, 50, 9
+
+    CONTROL "Eating increases players lenght", 105, "Button", BS_AUTOCHECKBOX, 171, 100, 112, 9
+
+    //CONTROL "Players respawn", 106, "Button", BS_AUTOCHECKBOX, 171, 120, 60, 9
+
+    CONTROL "Initial lenght:", -1, "Static", SS_LEFT, 171, 120, 60, 9
+
+
+    CONTROL "&OK", IDOK, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_GROUP, 243, 161, 48, 13
+    CONTROL "&Cancel", IDCANCEL, "Button", BS_PUSHBUTTON, 297, 161, 48, 13
 
 END
 

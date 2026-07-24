@@ -12,6 +12,7 @@
 
 #ifdef BUILD_SERVER
 #include "SnakeServer.h"
+#include "ServerDialogs.h"
 #else
 #include "SnakeClient.h"
 #include "ClientDialogs.h"

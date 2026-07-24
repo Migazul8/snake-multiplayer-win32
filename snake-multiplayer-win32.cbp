@@ -15,6 +15,7 @@
 					<Add option="/Ox" />
 				</Compiler>
 				<Linker>
+					<Add option="/SUBSYSTEM:WINDOWS,6.0" />
 					<Add option="/entry:clientMain" />
 				</Linker>
 			</Target>
@@ -27,8 +28,29 @@
 					<Add option="/Ox" />
 					<Add option="/DBUILD_SERVER" />
 				</Compiler>
+				<ResourceCompiler>
+					<Add option="/DBUILD_SERVER" />
+				</ResourceCompiler>
 				<Linker>
+					<Add option="/SUBSYSTEM:WINDOWS,6.0" />
 					<Add option="/entry:serverMain" />
+				</Linker>
+			</Target>
+			<Target title="Client Release XP">
+				<Option output="bin/XP/Snake" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/XP/Client" />
+				<Option type="0" />
+				<Option compiler="msvc" />
+				<Compiler>
+					<Add option="/Ox" />
+					<Add option="/DBUILD_XP" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add option="/DBUILD_XP" />
+				</ResourceCompiler>
+				<Linker>
+					<Add option="/SUBSYSTEM:WINDOWS,5.2" />
+					<Add option="/entry:clientMain" />
 				</Linker>
 			</Target>
 		</Build>
@@ -41,7 +63,6 @@
 			<Add directory="src" />
 		</ResourceCompiler>
 		<Linker>
-			<Add option="/SUBSYSTEM:WINDOWS,6.0" />
 			<Add library="kernel32" />
 			<Add library="gdi32" />
 			<Add library="user32" />
@@ -81,17 +102,29 @@
 		</Unit>
 		<Unit filename="src/ClientDialogs.c">
 			<Option compilerVar="CC" />
+			<Option target="Client Release" />
+			<Option target="Client Release XP" />
 		</Unit>
 		<Unit filename="src/ClientDialogs.h" />
 		<Unit filename="src/GameClient.c">
 			<Option compilerVar="CC" />
+			<Option target="Client Release" />
+			<Option target="Client Release XP" />
 		</Unit>
 		<Unit filename="src/GameServer.c">
 			<Option compilerVar="CC" />
+			<Option target="Server Release" />
 		</Unit>
+		<Unit filename="src/ServerDialogs.c">
+			<Option compilerVar="CC" />
+			<Option target="Server Release" />
+		</Unit>
+		<Unit filename="src/ServerDialogs.h" />
 		<Unit filename="src/Snake.h" />
 		<Unit filename="src/SnakeClient.c">
 			<Option compilerVar="CC" />
+			<Option target="Client Release" />
+			<Option target="Client Release XP" />
 		</Unit>
 		<Unit filename="src/SnakeClient.h" />
 		<Unit filename="src/SnakePackets.c">
@@ -100,6 +133,7 @@
 		<Unit filename="src/SnakePackets.h" />
 		<Unit filename="src/SnakeServer.c">
 			<Option compilerVar="CC" />
+			<Option target="Server Release" />
 		</Unit>
 		<Unit filename="src/SnakeServer.h" />
 		<Extensions>

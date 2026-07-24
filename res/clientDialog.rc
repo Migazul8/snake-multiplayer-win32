@@ -17,13 +17,13 @@ BEGIN
     CONTROL "Port:", -1, "Static", SS_LEFT, 24, 50, 25, 9
     CONTROL "29349", 112, "Edit", SS_LEFT | WS_TABSTOP, 80, 49, 27, 12, WS_EX_CLIENTEDGE
 
-    CONTROL "&Connect", 120, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP, 67, 72, 46, 14
+    CONTROL "&Connect", 120, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP, 68, 72, 42, 14
 
     CONTROL "LAN games:", -1, "Static", SS_LEFT, 178, 12, 100, 9
 
     CONTROL "", 110, "SysListView32", LVS_REPORT | WS_VSCROLL | LVS_OWNERDATA | LVS_SINGLESEL | WS_TABSTOP, 178, 24, 210, 73, WS_EX_CLIENTEDGE
 
-    //CONTROL "&Editar controles", 121, "Button", BS_PUSHBUTTON | WS_TABSTOP | WS_DISABLED, 338, 2, 60, 14
+    //CONTROL "&Edit controls", 121, "Button", BS_PUSHBUTTON | WS_TABSTOP | WS_DISABLED, 338, 2, 60, 14
 
 END
 
@@ -46,7 +46,7 @@ BEGIN
     CONTROL "Max players:", 202, "Static", SS_LEFT | WS_DISABLED, 24, 48, 100, 9
     CONTROL "-", 103, "Edit", ES_RIGHT | ES_READONLY | WS_DISABLED, 154, 48, 20, 9
 
-    CONTROL "Jugadores conectados:", 204, "Static", SS_LEFT | WS_DISABLED, 24, 66, 100 9
+    CONTROL "Connected players:", 204, "Static", SS_LEFT | WS_DISABLED, 24, 66, 100 9
     CONTROL "-", 104, "Edit", ES_RIGHT | ES_READONLY | WS_DISABLED, 154, 66, 20, 9
 
 
@@ -64,11 +64,11 @@ END
 
 3 DIALOGEX 0, 0, 300, 100
 STYLE DS_CENTER | DS_SETFONT | WS_POPUP | WS_SYSMENU | WS_MINIMIZEBOX | WS_CAPTION
-CAPTION "Snake - Esperando al anfitrión"
+CAPTION "Snake - Waiting host"
 FONT 9, "Segoe UI"
 BEGIN
 
-    CONTROL "&Salir", IDCLOSE, "Button", BS_PUSHBUTTON | WS_TABSTOP, 127, 50, 46, 13
+    CONTROL "&Leave", IDCLOSE, "Button", BS_PUSHBUTTON | WS_TABSTOP, 127, 50, 46, 13
 
     CONTROL "", 201, "Static", SS_LEFT, 12, 20, 276, 29
 

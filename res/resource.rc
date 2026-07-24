@@ -2,6 +2,7 @@
 #include <Windows.h>
 
 #ifdef BUILD_SERVER
+#include "ServerDialogs.h"
 #include "serverDialog.rc"
 #include "serverVersion.rc"
 #else
