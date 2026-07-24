@@ -48,6 +48,7 @@
 			<Add library="Ws2_32" />
 			<Add library="uxtheme" />
 			<Add library="comctl32" />
+			<Add library="ucrt" />
 		</Linker>
 		<Unit filename="res/clientDialog.rc">
 			<Option compilerVar="WINDRES" />

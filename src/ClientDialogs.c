@@ -9,8 +9,18 @@ extern HINSTANCE hInstance;
 extern HANDLE hHeap;
 
 INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+
+    ServerConnectDlgData* dlgData = (ServerConnectDlgData*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
+
     switch(msg) {
         case WM_INITDIALOG:
+
+            dlgData = (ServerConnectDlgData*)HeapAlloc(hHeap, 0, sizeof(ServerConnectDlgData));
+
+            dlgData->serverConn = (ServerConnection*)lParam;
+
+            SetWindowLongPtrW(hWnd, GWLP_USERDATA, dlgData);
+
             return TRUE;
 
         case WM_COMMAND:
@@ -20,6 +30,24 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                     return TRUE;
             }
             break;
+
+        case WM_SERVERCONNECTDONE:
+            switch(wParam) {
+                case 0:
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    break;
+
+
+            }
+            return TRUE;
+
+        case WM_DESTROY:
+            HeapFree(hHeap, 0, dlgData);
+
+            return TRUE;
     }
     return FALSE;
 
@@ -46,12 +74,12 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 col.mask = LVCF_TEXT | LVCF_WIDTH;
                 col.pszText = ipText;
                 col.cx = 200;
-            SendDlgItemMessageW(hWnd, 110, LVM_INSERTCOLUMNW, 0, &col);
+            SendDlgItemMessageW(hWnd, 110, LVM_INSERTCOLUMNW, 0, (LPARAM)&col);
 
                 col.mask = LVCF_TEXT | LVCF_WIDTH;
                 col.pszText = portText;
                 col.cx = 100;
-            SendDlgItemMessageW(hWnd, 110, LVM_INSERTCOLUMNW, 1, &col);
+            SendDlgItemMessageW(hWnd, 110, LVM_INSERTCOLUMNW, 1, (LPARAM)&col);
 
             SetTimer(hWnd, 10, 3000, NULL);
             SendMessageW(hWnd, WM_TIMER, 10, NULL);
@@ -75,6 +103,7 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                     DWORD ip;
                     SendDlgItemMessageW(hWnd, 111, IPM_GETADDRESS, 0, &ip);
                     dlgData->serverConn->addr.sin_addr.s_addr = htonl(ip);
+                    dlgData->serverConn->addr.sin_family = AF_INET;
 
                     if(DialogBoxParamW(hInstance, IDD_SERVERCONNECT, hWnd, ServerConnectDlgProc, dlgData->serverConn) == IDOK) {
                         EndDialog(hWnd, IDOK);
@@ -89,6 +118,7 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             break;
 
         case WM_DESTROY:
+            HeapFree(hHeap, 0, dlgData);
             KillTimer(hWnd, 10);
             return TRUE;
 

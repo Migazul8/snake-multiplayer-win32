@@ -8,6 +8,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+#include "SnakePackets.h"
+
 #ifdef BUILD_SERVER
 #include "SnakeServer.h"
 #else

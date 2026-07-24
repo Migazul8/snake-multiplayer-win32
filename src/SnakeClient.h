@@ -1,3 +1,5 @@
+#define WM_SERVERCONNECTDONE WM_APP+10
+
 typedef struct {
 
     SOCKADDR_IN addr;
