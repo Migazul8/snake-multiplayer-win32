@@ -1,0 +1,28 @@
+#include <winver.h>
+
+VS_VERSION_INFO VERSIONINFO
+
+FILEVERSION    1,0,0,0
+PRODUCTVERSION 1,0,0,0
+FILEOS         VOS__WINDOWS32
+FILETYPE       VFT_APP
+{
+  BLOCK "StringFileInfo"
+  {
+    BLOCK "040904B0"
+    {
+      VALUE "CompanyName",       "Miguel Soto Morales"
+      VALUE "FileDescription",   "Snake"
+      VALUE "FileVersion",       "1.0.0.0"
+      VALUE "InternalName",      "SotoSnake"
+      VALUE "LegalCopyright",    "©2026 Miguel Soto Morales"
+      VALUE "OriginalFilename",  "Snake.exe"
+      VALUE "ProductName",       "SotoSnake"
+      VALUE "ProductVersion",    "1.0.0.0"
+    }
+  }
+  BLOCK "VarFileInfo"
+  {
+    VALUE "Translation", 0, 0
+  }
+}
