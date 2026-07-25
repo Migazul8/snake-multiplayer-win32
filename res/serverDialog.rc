@@ -11,7 +11,11 @@ BEGIN
     CONTROL "Port:", -1, "Static", SS_LEFT, 24, 20, 50, 9
     CONTROL "29349", 101, "Edit", WS_TABSTOP | ES_NUMBER, 106, 20, 28, 12, WS_EX_CLIENTEDGE
 
-    CONTROL "Show server in &LAN searches", 104, "Button", BS_AUTOCHECKBOX, 24, 40, 110, 9
+    CONTROL "Show server in &LAN searches", 104, "Button", BS_AUTOCHECKBOX | WS_TABSTOP | WS_DISABLED, 24, 40, 110, 9
+
+
+    CONTROL "Security", -1, "Button", BS_GROUPBOX, 12, 67, 135, 60
+    CONTROL "Request &password", 109, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 81, 70, 9
 
 
     CONTROL "Game options", -1, "Button", BS_GROUPBOX, 159, 6, 186, 140
@@ -24,14 +28,28 @@ BEGIN
     CONTROL "", 102, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
 
     CONTROL "Grid width:", -1, "Static", SS_LEFT, 171, 60, 50, 9
+    CONTROL "", -1, "Edit", SS_RIGHT | WS_TABSTOP, 303, 60, 30, 12, WS_EX_CLIENTEDGE
+    CONTROL "", 106, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
 
     CONTROL "Grid height:", -1, "Static", SS_LEFT, 171, 80, 50, 9
+    CONTROL "", -1, "Edit", SS_RIGHT | WS_TABSTOP, 303, 80, 30, 12, WS_EX_CLIENTEDGE
+    CONTROL "", 107, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
 
-    CONTROL "Eating increases players lenght", 105, "Button", BS_AUTOCHECKBOX, 171, 100, 112, 9
+    CONTROL "&Eating increases players lenght", 105, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 171, 100, 112, 9
 
     //CONTROL "Players respawn", 106, "Button", BS_AUTOCHECKBOX, 171, 120, 60, 9
 
-    CONTROL "Initial lenght:", -1, "Static", SS_LEFT, 171, 120, 60, 9
+    CONTROL "Initial player lenght:", -1, "Static", SS_LEFT, 171, 120, 100, 9
+    CONTROL "", -1, "Edit", SS_RIGHT | WS_TABSTOP, 303, 120, 30, 12, WS_EX_CLIENTEDGE
+    CONTROL "", 108, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
+
+
+
+    CONTROL "Secret options >:)", 600, "Button", BS_GROUPBOX, 12, 122, 135, 50
+
+    CONTROL "TPS:", 601, "Static", SS_LEFT, 24, 138, 40, 9
+    CONTROL "", 501, "Edit", SS_RIGHT, 100, 138, 30, 12, WS_EX_CLIENTEDGE
+    CONTROL "", 502, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
 
 
     CONTROL "&OK", IDOK, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_GROUP, 243, 161, 48, 13
@@ -39,24 +57,84 @@ BEGIN
 
 END
 
-2 DIALOGEX 0, 0, 400, 200
+IDD_CREATESERVER DIALOGEX 0, 0, 357, 180
+STYLE DS_CENTER | WS_POPUP | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_BORDER | DS_SETFONT
+EXSTYLE WS_EX_CONTROLPARENT
+CAPTION "Snake Server - Create game"
+FONT 9, "Segoe UI"
+LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
+BEGIN
+
+    CONTROL "Opciones del servidor", -1, "Button", BS_GROUPBOX, 12, 6, 135, 55
+
+    CONTROL "Puerto:", -1, "Static", SS_LEFT, 24, 20, 50, 9
+    CONTROL "29349", 101, "Edit", WS_TABSTOP | ES_NUMBER, 106, 20, 28, 12, WS_EX_CLIENTEDGE
+
+    CONTROL "Show server in &LAN searches", 104, "Button", BS_AUTOCHECKBOX | WS_TABSTOP | WS_DISABLED, 24, 40, 110, 9
+
+
+    CONTROL "Seguridad", -1, "Button", BS_GROUPBOX, 12, 67, 135, 60
+    CONTROL "Solicitar &contraseña", 109, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 81, 80, 9
+
+
+    CONTROL "Opciones de la partida", -1, "Button", BS_GROUPBOX, 159, 6, 186, 140
+
+    CONTROL "Nombre:", -1, "Static", 0, 171, 20, 40, 9
+    CONTROL "Snake Game Server", 103, "Edit", SS_RIGHT | WS_TABSTOP | WS_GROUP | ES_AUTOHSCROLL, 223, 20, 110, 12, WS_EX_CLIENTEDGE
+
+    CONTROL "Máximo de jugadores:", -1, "Static", SS_LEFT, 171, 40, 80, 9
+    CONTROL "", -1, "Edit", ES_NUMBER | ES_RIGHT | WS_TABSTOP | WS_GROUP, 303, 40, 30, 12, WS_EX_CLIENTEDGE
+    CONTROL "", 102, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
+
+    CONTROL "Anchura del tablero:", -1, "Static", SS_LEFT, 171, 60, 70, 9
+    CONTROL "", -1, "Edit", SS_RIGHT | WS_TABSTOP, 303, 60, 30, 12, WS_EX_CLIENTEDGE
+    CONTROL "", 106, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
+
+    CONTROL "Altura del tablero:", -1, "Static", SS_LEFT, 171, 80, 70, 9
+    CONTROL "", -1, "Edit", SS_RIGHT | WS_TABSTOP, 303, 80, 30, 12, WS_EX_CLIENTEDGE
+    CONTROL "", 107, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
+
+    CONTROL "&Comer aumenta la longitud de los jugadores", 105, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 171, 100, 160, 9
+
+    //CONTROL "Players respawn", 106, "Button", BS_AUTOCHECKBOX, 171, 120, 60, 9
+
+    CONTROL "Longitud inicial de jugadores:", -1, "Static", SS_LEFT, 171, 120, 100, 9
+    CONTROL "", -1, "Edit", SS_RIGHT | WS_TABSTOP, 303, 120, 30, 12, WS_EX_CLIENTEDGE
+    CONTROL "", 108, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
+
+
+
+    CONTROL "Opciones secretas >:)", 600, "Button", BS_GROUPBOX, 12, 122, 135, 50
+
+    CONTROL "TPS:", 601, "Static", SS_LEFT, 24, 138, 40, 9
+    CONTROL "", 501, "Edit", SS_RIGHT, 100, 138, 30, 12, WS_EX_CLIENTEDGE
+    CONTROL "", 502, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
+
+
+    CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_GROUP, 243, 161, 48, 13
+    CONTROL "&Cancelar", IDCANCEL, "Button", BS_PUSHBUTTON, 297, 161, 48, 13
+
+END
+
+IDD_SERVERPANEL DIALOGEX 0, 0, 400, 200
 STYLE DS_CENTER | DS_SETFONT | WS_POPUP | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX | WS_BORDER
 CAPTION "Snake Server"
 FONT 9, "Segoe UI"
+LANGUAGE LANG_ENGLISH, SUBLANG_NEUTRAL
 BEGIN
 
-    CONTROL "Estado", -1, "Button", BS_GROUPBOX, 12, 12, 200, 100
+    CONTROL "Status", -1, "Button", BS_GROUPBOX, 12, 12, 160, 100
     //CONTROL "Jugadores:", -1, "Static", SS_LEFT, 200, 12, 100, 9
 
-    CONTROL "&Iniciar partida", 101, "Button", BS_PUSHBUTTON | WS_TABSTOP, 12, 150, 56, 14
+    CONTROL "&Start game", 101, "Button", BS_PUSHBUTTON | WS_TABSTOP, 12, 150, 56, 14
 
-    CONTROL "&Detener", 102, "Button", BS_PUSHBUTTON | WS_TABSTOP, 100, 150, 56, 14
+    CONTROL "&Stop", 102, "Button", BS_PUSHBUTTON | WS_TABSTOP, 100, 150, 56, 14
 
     //CONTROL "", 200, "SysListView32", LVS_REPORT, 200, 24, 100, 100, WS_EX_CLIENTEDGE
 
-    CONTROL "-/-", 201, "Static", SS_RIGHT, 140, 30, 40, 9
+    CONTROL "-/-", 201, "Static", SS_RIGHT, 120, 30, 40, 9
 
-    CONTROL "Número de jugadores:", -1, "Static", SS_LEFT, 24, 30, 150, 9
+    CONTROL "Connected players:", -1, "Static", SS_LEFT, 24, 30, 100, 9
 
 
 END

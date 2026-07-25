@@ -1,7 +1,9 @@
 #include "Snake.h"
 
 HINSTANCE hInstance;
-HANDLE hHeap;
+static HANDLE hHeap;
+
+static ServerInstance serverInst = {};
 
 void serverMain() {
 
@@ -10,7 +12,10 @@ void serverMain() {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-    DialogBoxParamW(hInstance, IDD_CREATESERVER, NULL, ServerCreateDlgProc, 0);
+    if(DialogBoxParamW(hInstance, IDD_CREATESERVER, NULL, ServerCreateDlgProc, &serverInst) == IDOK) {
+        serverInst.hListenerThread = CreateThread(NULL, 0, PacketListenerThreadEntry, &serverInst, 0, NULL);
+        DialogBoxParamW(hInstance, IDD_SERVERPANEL, NULL, ServerPanelDlgProc, &serverInst);
+    }
 
     WSACleanup();
 

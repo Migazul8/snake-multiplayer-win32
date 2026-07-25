@@ -44,8 +44,21 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
         case WM_COMMAND:
             switch(LOWORD(wParam)) {
+                case IDOK:
+
+                    GetDlgItemTextW(hWnd, 102, dlgData->args.playerName, 32);
+
+                    dlgData->hConnectThread = CreateThread(NULL, 0, ServerJoinThreadEntry, &dlgData->args, 0, NULL);
+
+                    ShowWindow(GetDlgItem(hWnd, 130), SW_SHOW);
+                    EnableWindow(GetDlgItem(hWnd, IDOK), FALSE);
+                    //TODO:DISABLE CONTROLS
+
+                    return TRUE;
+
                 case IDCANCEL:
-                    //TODO: CANCEL CONNECTION
+                    TerminateThread(dlgData->hConnectThread, 0);
+                    closesocket(dlgData->serverConn->clientSocket);
                     EndDialog(hWnd, IDCANCEL);
                     return TRUE;
             }
@@ -56,6 +69,21 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
             WCHAR buffer[512];
             switch(wParam) {
                 case 0:
+
+                    ServerInfoPacket* sip = (ServerInfoPacket*)lParam;
+
+                    MultiByteToWideChar(CP_UTF8, 0, sip->serverName, 64, buffer, 512);
+
+                    SetDlgItemTextW(hWnd, 101, buffer);
+
+                    swprintf_s(buffer, 512, L"%u", sip->maxPlayers);
+                    SetDlgItemTextW(hWnd, 103, buffer);
+
+                    swprintf_s(buffer, 512, L"%u", sip->currentPlayerCount);
+                    SetDlgItemTextW(hWnd, 104, buffer);
+
+                    swprintf_s(buffer, 512, L"%ux%u", sip->gridW, sip->gridH);
+                    SetDlgItemTextW(hWnd, 106, buffer);
 
                     EnableWindow(GetDlgItem(hWnd, 101), TRUE);
                     EnableWindow(GetDlgItem(hWnd, 103), TRUE);
@@ -68,6 +96,8 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                     EnableWindow(GetDlgItem(hWnd, 205), TRUE);
                     EnableWindow(GetDlgItem(hWnd, 105), TRUE);
                     EnableWindow(GetDlgItem(hWnd, 104), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 206), TRUE);
+                    EnableWindow(GetDlgItem(hWnd, 106), TRUE);
 
                     return TRUE;
 
@@ -208,7 +238,7 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 
 }
 
-void loadStrings(HINSTANCE hInstance) {
+void loadDialogStrings(HINSTANCE hInstance) {
 
     LoadStringW(hInstance, 1, portText, 16);
     LoadStringW(hInstance, 2, ipText, 32);

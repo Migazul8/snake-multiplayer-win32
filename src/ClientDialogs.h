@@ -23,20 +23,12 @@ typedef struct {
 
     ServerConnection* serverConn;
 
-    HWND hWnd;
-
-}ConnectArgs;
-
-typedef struct {
-
-    ServerConnection* serverConn;
-
     HANDLE hConnectThread;
-    ConnectArgs args;
+    ServerConnectArgs args;
 
 }ServerConnectDlgData;
 
 INT_PTR CALLBACK ServerSelectDlgProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK ServerConnectDlgProc(HWND, UINT, WPARAM, LPARAM);
 
-void loadStrings(HINSTANCE hInstance);
+void loadDialogStrings(HINSTANCE hInstance);

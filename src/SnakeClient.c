@@ -24,7 +24,7 @@ void clientMain() {
     hInstance = GetModuleHandleW(NULL);
     hHeap = GetProcessHeap();
 
-    loadStrings(hInstance);
+    loadDialogStrings(hInstance);
 
     loadDPIProcs();
 

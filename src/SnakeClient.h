@@ -1,4 +1,9 @@
 #define WM_SERVERCONNECTDONE WM_APP+10
+#define WM_SERVERJOINDONE WM_APP+11
+
+#define DEF_TILESIZE 10
+#define DEF_GRIDW 40
+#define DEF_GRIDH 25
 
 typedef struct {
 
@@ -47,9 +52,14 @@ typedef struct {
 
     HWND hWnd;
 
+    int32_t playerColor;
+
+    WCHAR playerName[32];
+
 }ServerConnectArgs;
 
 DWORD WINAPI ServerConnectThreadEntry(ServerConnectArgs*);
+DWORD WINAPI ServerJoinThreadEntry(ServerConnectArgs*);
 
 typedef UINT (WINAPI* pGetDpiForWindow)(HWND hWnd);
 typedef BOOL (WINAPI* pAdjustWindowRectExForDpi)(LPRECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle, UINT dpi);

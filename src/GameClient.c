@@ -1,5 +1,18 @@
 #include "Snake.h"
 
+
+DWORD WINAPI ServerJoinThreadEntry(ServerConnectArgs* args) {
+
+    JoinRequestPacket jr;
+    initPacket(&jr.gp, GP_JOINREQUEST);
+
+    jr.playerColor = args->playerColor;
+    WideCharToMultiByte(CP_UTF8, 0, args->playerName, -1, jr.playerName, 32, NULL, NULL);
+
+    return 0;
+
+}
+
 DWORD WINAPI ServerConnectThreadEntry(ServerConnectArgs* args) {
 
     args->serverConn->clientSocket = INVALID_SOCKET;

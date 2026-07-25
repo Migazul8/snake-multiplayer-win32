@@ -22,8 +22,15 @@ typedef struct {
 
     GamePacket gp;
 
-    uint64_t maxPlayers;
-    uint64_t currentPlayerCount;
+    uint32_t maxPlayers;
+    uint32_t currentPlayerCount;
+
+    int32_t gridW;
+    int32_t gridH;
+
+    int8_t playersGrow;
+
+    uint32_t initialLenght;
 
     char serverName[64];
 
@@ -47,7 +54,7 @@ typedef struct {
 
     int64_t secretNumber;
 
-    uint64_t playerID;
+    uint32_t playerID;
 
 }JoinAnswerPacket;
 
@@ -57,7 +64,7 @@ typedef struct {
 
     int64_t secretNumber;
 
-    uint64_t playerID;
+    uint32_t playerID;
 
 }LeavePacket;
 
@@ -65,7 +72,7 @@ typedef struct {
 
     GamePacket gp;
 
-    uint64_t playerID;
+    uint32_t playerID;
 
     int64_t secretNumber;
 
