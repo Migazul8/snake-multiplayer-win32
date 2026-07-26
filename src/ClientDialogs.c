@@ -5,6 +5,9 @@ extern WCHAR* appName;
 static WCHAR portText[16];
 static WCHAR ipText[32];
 
+static WCHAR connClosedText[256];
+static WCHAR timedOutText[128];
+
 extern HINSTANCE hInstance;
 extern HANDLE hHeap;
 
@@ -15,7 +18,7 @@ extern pAdjustWindowRectExForDpi AdjustWindowRectExForDpiPtr;
 extern pSystemParametersInfoForDpi SystemParametersInfoForDpiPtr;
 extern pGetSystemMetricsForDpi GetSystemMetricsForDpiPtr;
 
-//TODO: USE STRINGS FROM RESOURCES
+static HCURSOR hLoadCursor;
 
 INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
@@ -33,6 +36,12 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
             dlgData->args.hWnd = hWnd;
             dlgData->args.serverConn = dlgData->serverConn;
 
+            if(hLoadCursor == NULL) {
+                hLoadCursor = LoadCursorW(NULL, IDC_APPSTARTING);
+            }
+
+            dlgData->showLoadCursor = true;
+
             return TRUE;
 
         case WM_SHOWWINDOW:
@@ -46,13 +55,15 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
             switch(LOWORD(wParam)) {
                 case IDOK:
 
+                    dlgData->showLoadCursor = true;
+
                     GetDlgItemTextW(hWnd, 102, dlgData->args.playerName, 32);
+                    dlgData->args.playerColor = SendDlgItemMessageW(hWnd, 105, CB_GETCURSEL, 0, 0);
 
                     dlgData->hConnectThread = CreateThread(NULL, 0, ServerJoinThreadEntry, &dlgData->args, 0, NULL);
 
                     ShowWindow(GetDlgItem(hWnd, 130), SW_SHOW);
-                    EnableWindow(GetDlgItem(hWnd, IDOK), FALSE);
-                    //TODO:DISABLE CONTROLS
+                    SendMessageW(hWnd, WM_ENABLECONTROLS, 0, FALSE);
 
                     return TRUE;
 
@@ -64,7 +75,72 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
             }
             break;
 
+        case WM_SERVERJOINDONE: {
+            dlgData->showLoadCursor = false;
+            ShowWindow(GetDlgItem(hWnd, 130), SW_HIDE);
+            WCHAR buffer[512];
+            switch(wParam) {
+                case 0:
+                    switch(lParam) {
+                        case 0:
+                            EndDialog(hWnd, IDOK);
+                            break;
+
+                        case 1:
+                            MessageBoxW(hWnd, L"Game already started", appName, MB_ICONERROR);
+                            EndDialog(hWnd, IDCANCEL);
+                            break;
+
+                        case 2:
+                            MessageBoxW(hWnd, L"Lobby full of lil bros", appName, MB_ICONERROR);
+                            break;
+
+                        default:
+                            MessageBoxW(hWnd, L"Invalid server response", appName, MB_ICONERROR);
+                            break;
+                    }
+                    break;
+
+                case 1:
+                    MessageBoxW(hWnd, L"error creatin socke", appName, MB_ICONERROR);
+                    break;
+
+                case 2:
+                    MessageBoxW(hWnd, L"error sendin sock", appName, MB_ICONERROR);
+                    break;
+
+                case 3:
+                    switch(lParam) {
+                        case WSAETIMEDOUT:
+                            MessageBoxW(hWnd, timedOutText, appName, MB_ICONERROR);
+                            EndDialog(hWnd, IDCANCEL);
+                            break;
+
+                        case 10054:
+                            MessageBoxW(hWnd, L"Connection closed", appName, MB_ICONERROR);
+                            EndDialog(hWnd, IDCANCEL);
+                            break;
+
+                        default:
+                            swprintf_s(buffer, 512, L"Error %d while recieving data", lParam);
+                            MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
+                            break;
+
+                    }
+                    break;
+
+                case 4:
+                    MessageBoxW(hWnd, L"invalid responseeeee", appName, MB_ICONERROR);
+                    break;
+
+            }
+
+        }
+            return TRUE;
+
+
         case WM_SERVERCONNECTDONE: {
+            dlgData->showLoadCursor = false;
             ShowWindow(GetDlgItem(hWnd, 130), SW_HIDE);
             WCHAR buffer[512];
             switch(wParam) {
@@ -85,19 +161,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                     swprintf_s(buffer, 512, L"%ux%u", sip->gridW, sip->gridH);
                     SetDlgItemTextW(hWnd, 106, buffer);
 
-                    EnableWindow(GetDlgItem(hWnd, 101), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 103), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 201), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 202), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, IDOK), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 102), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 203), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 204), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 205), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 105), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 104), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 206), TRUE);
-                    EnableWindow(GetDlgItem(hWnd, 106), TRUE);
+                    SendMessageW(hWnd, WM_ENABLECONTROLS, 0, TRUE);
 
                     return TRUE;
 
@@ -112,24 +176,24 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                     break;
 
                 case 3:
-                    if(lParam == WSAETIMEDOUT) {
-                        MessageBoxW(hWnd, L"Timeout while waiting for server response", appName, MB_ICONERROR);
-                    }else{
-                        switch(lParam) {
-                            case 10054:
-                                MessageBoxW(hWnd, L"The remote computer closed the connection.\nCheck the IP address and port introduced and try again later.", appName, MB_ICONERROR);
-                                break;
+                    switch(lParam) {
+                        case WSAETIMEDOUT:
+                            MessageBoxW(hWnd, timedOutText, appName, MB_ICONERROR);
+                            break;
 
-                            case WSAEMSGSIZE:
-                                MessageBoxW(hWnd, L"Invalid response", appName, MB_ICONERROR);
-                                break;
+                        case 10054:
+                            MessageBoxW(hWnd, connClosedText, appName, MB_ICONERROR);
+                            break;
 
-                            default:
-                                swprintf_s(buffer, 512, L"Error %d while receiving server response", (int)lParam);
-                                MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
-                                break;
+                        case WSAEMSGSIZE:
+                            MessageBoxW(hWnd, L"Invalid response", appName, MB_ICONERROR);
+                            break;
 
-                        }
+                        default:
+                            swprintf_s(buffer, 512, L"Error %d while receiving server response", (int)lParam);
+                            MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
+                            break;
+
                     }
                     break;
 
@@ -144,6 +208,29 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
             return TRUE;
 
         }
+
+        case WM_ENABLECONTROLS:
+            EnableWindow(GetDlgItem(hWnd, 101), lParam);
+            EnableWindow(GetDlgItem(hWnd, 103), lParam);
+            EnableWindow(GetDlgItem(hWnd, 201), lParam);
+            EnableWindow(GetDlgItem(hWnd, 202), lParam);
+            EnableWindow(GetDlgItem(hWnd, IDOK), lParam);
+            EnableWindow(GetDlgItem(hWnd, 102), lParam);
+            EnableWindow(GetDlgItem(hWnd, 203), lParam);
+            EnableWindow(GetDlgItem(hWnd, 204), lParam);
+            EnableWindow(GetDlgItem(hWnd, 205), lParam);
+            EnableWindow(GetDlgItem(hWnd, 105), lParam);
+            EnableWindow(GetDlgItem(hWnd, 104), lParam);
+            EnableWindow(GetDlgItem(hWnd, 206), lParam);
+            EnableWindow(GetDlgItem(hWnd, 106), lParam);
+            return TRUE;
+
+        case WM_SETCURSOR:
+            if(dlgData->showLoadCursor) {
+                SetCursor(hLoadCursor);
+                return TRUE;
+            }
+            break;
 
         case WM_DESTROY:
             HeapFree(hHeap, 0, dlgData);
@@ -242,5 +329,7 @@ void loadDialogStrings(HINSTANCE hInstance) {
 
     LoadStringW(hInstance, 1, portText, 16);
     LoadStringW(hInstance, 2, ipText, 32);
+    LoadStringW(hInstance, 3, connClosedText, 256);
+    LoadStringW(hInstance, 4, timedOutText, 128);
 
 }

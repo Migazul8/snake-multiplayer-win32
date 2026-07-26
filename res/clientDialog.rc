@@ -68,11 +68,44 @@ END
 3 DIALOGEX 0, 0, 300, 100
 STYLE DS_CENTER | DS_SETFONT | WS_POPUP | WS_SYSMENU | WS_MINIMIZEBOX | WS_CAPTION
 CAPTION "Snake - Waiting host"
+#ifdef BUILD_XP
+FONT 8, "MS Shell Dlg"
+#else
 FONT 9, "Segoe UI"
+#endif // BUILD_XP
 BEGIN
 
     CONTROL "&Leave", IDCLOSE, "Button", BS_PUSHBUTTON | WS_TABSTOP, 127, 50, 46, 13
 
     CONTROL "", 201, "Static", SS_LEFT, 12, 20, 276, 29
+
+END
+
+1 DIALOGEX 0, 0, 400, 110
+STYLE DS_CENTER | DS_SETFONT | WS_POPUP | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX
+CAPTION "Snake - Unirse a partida"
+#ifdef BUILD_XP
+FONT 8, "MS Shell Dlg"
+#else
+FONT 9, "Segoe UI"
+#endif // BUILD_XP
+LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
+BEGIN
+
+    CONTROL "Unirse manualmente", -1, "Button", BS_GROUPBOX, 12, 12, 154, 85
+
+    CONTROL "Dirección IPv4:", -1, "Static", SS_LEFT, 24, 30, 80, 9
+    CONTROL "", 111, "SysIPAddress32", WS_TABSTOP, 80, 29, 74, 11
+
+    CONTROL "Puerto:", -1, "Static", SS_LEFT, 24, 50, 25, 9
+    CONTROL "29349", 112, "Edit", SS_LEFT | WS_TABSTOP, 80, 49, 27, 12, WS_EX_CLIENTEDGE
+
+    CONTROL "&Conectar", 120, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP, 67, 72, 46, 14
+
+    CONTROL "Partidas LAN:", -1, "Static", SS_LEFT, 178, 12, 100, 9
+
+    CONTROL "", 110, "SysListView32", LVS_REPORT | WS_VSCROLL | LVS_OWNERDATA | LVS_SINGLESEL | WS_TABSTOP, 178, 24, 210, 73, WS_EX_CLIENTEDGE
+
+    //CONTROL "&Editar controles", 121, "Button", BS_PUSHBUTTON | WS_TABSTOP | WS_DISABLED, 338, 2, 60, 14
 
 END

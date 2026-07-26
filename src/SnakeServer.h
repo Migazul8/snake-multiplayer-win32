@@ -1,19 +1,13 @@
 typedef struct {
 
-    SOCKADDR_IN inAddr;
+    struct {
+        int64_t secretNumber;
 
-    int64_t secretNumber;
+        SOCKADDR_IN addr;
 
-}LobbyPlayerConnection;
+        bool slotFree;
 
-typedef struct {
-
-    uint32_t maxConns;
-    LobbyPlayerConnection* playerConns;
-
-}LobbyServerData;
-
-typedef struct {
+    }connection;
 
     uint64_t points;
 
@@ -21,7 +15,9 @@ typedef struct {
     struct {
         int32_t x;
         int32_t y;
-    }bodyParts;
+    } bodyParts[1024];
+
+    bool active;
 
 }PlayerData;
 
@@ -36,12 +32,15 @@ typedef struct {
     int32_t foodX;
     int32_t foodY;
 
+    int32_t foodType;
+
+    uint32_t currentPlayerCount;
+
     uint32_t maxPlayers;
+    uint32_t playerDataLenght;
     PlayerData* playerData;
 
     bool hasGameStarted;
-
-    LobbyServerData* lobbyData;
 
     char serverName[64];
     WCHAR wServerName[64];

@@ -58,6 +58,8 @@ typedef struct {
 
 }ServerConnectArgs;
 
+void leaveServer(ServerConnection* serverConn);
+
 DWORD WINAPI ServerConnectThreadEntry(ServerConnectArgs*);
 DWORD WINAPI ServerJoinThreadEntry(ServerConnectArgs*);
 

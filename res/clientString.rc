@@ -4,5 +4,18 @@ BEGIN
 
     1, "Port"
     2, "IPv4 address"
+    3, "The remote computer closed the connection.\nCheck the IP address and port introduced and try again later."
+    4, "The server didn't respond.\nCheck the IP adress and port introduced and try again."
+
+END
+
+STRINGTABLE
+LANGUAGE LANG_SPANISH, SUBLANG_NEUTRAL
+BEGIN
+
+    1, "Puerto"
+    2, "Dirección IPv4"
+    3, "La conexión fue cerrada por el equipo remoto.\nComprueba la dirección IP y el puerto introducidos e inténtalo de nuevo más tarde."
+    4, "El servidor no respondió.\nComprueba la dirección IP y el puerto introducidos e inténtalo de nuevo."
 
 END

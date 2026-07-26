@@ -4,6 +4,8 @@ static HANDLE hHeap;
 
 void handlePacket(GamePacket* gp, SOCKADDR_IN* fromAddr, ServerInstance* serverInst);
 
+void addPlayer(JoinRequestPacket* jr, ServerInstance* serverInst, SOCKADDR_IN* addr, JoinAnswerPacket* ja);
+
 DWORD WINAPI GameServerThreadEntry(ServerInstance* serverInst) {
 
     return 0;
@@ -24,6 +26,14 @@ void handlePacket(GamePacket* gp, SOCKADDR_IN* fromAddr, ServerInstance* serverI
             wcscpy_s(sip.serverName, 64, serverInst->serverName);
 
             sendto(serverInst->serverSocket, &sip, sizeof(ServerInfoPacket), 0, fromAddr, sizeof(SOCKADDR_IN));
+
+            break;
+
+        case GP_JOINREQUEST:
+            JoinAnswerPacket ja;
+            addPlayer((JoinRequestPacket*)gp, serverInst, fromAddr, &ja);
+
+            sendto(serverInst->serverSocket, &ja, sizeof(JoinAnswerPacket), 0, fromAddr, sizeof(SOCKADDR_IN));
 
             break;
     }
@@ -48,10 +58,47 @@ DWORD WINAPI PacketListenerThreadEntry(ServerInstance* serverInst) {
 
 }
 
+void addPlayer(JoinRequestPacket* jr, ServerInstance* serverInst, SOCKADDR_IN* addr, JoinAnswerPacket* ja) {
+
+    initPacket(&ja->gp, GP_JOINANSWER);
+
+    if(serverInst->hasGameStarted) {
+        ja->returnCode = 1;
+    }
+
+    if(serverInst->currentPlayerCount >= serverInst->maxPlayers) {
+        ja->returnCode = 2;
+        return;
+    }
+
+    for(uint32_t i = 0; i<serverInst->maxPlayers; i++){
+        if(serverInst->playerData[i].connection.slotFree) {
+            ja->returnCode = 0;
+            ja->playerID = i;
+            ja->secretNumber = 67;
+            serverInst->playerData[i].connection.addr = *addr;
+            serverInst->playerData[i].connection.secretNumber = ja->secretNumber;
+
+            serverInst->currentPlayerCount++;
+
+            if(serverInst->currentPlayerCount > serverInst->playerDataLenght) {
+                serverInst->playerDataLenght = serverInst->currentPlayerCount;
+            }
+
+            return;
+        }
+    }
+
+    ja->returnCode = 2;
+
+}
+
 void closeServer(ServerInstance* serverInst) {
 
     TerminateThread(serverInst->hListenerThread, 0);
     closesocket(serverInst->serverSocket);
+
+    HeapFree(hHeap, 0, serverInst->playerData);
 
 }
 
@@ -97,9 +144,12 @@ int createServer(ServerInstance* serverInst, WCHAR* port, bool lanVisibility, WC
 
     serverInst->hasGameStarted = FALSE;
 
-    serverInst->lobbyData = (LobbyServerData*)HeapAlloc(hHeap, 0, sizeof(LobbyServerData));
-    serverInst->lobbyData->maxConns = maxPlayers;
-    serverInst->lobbyData->playerConns = (LobbyPlayerConnection*)HeapAlloc(hHeap, 0, sizeof(LobbyPlayerConnection)*maxPlayers);
+    serverInst->currentPlayerCount = 0;
+    serverInst->playerData = (PlayerData*)HeapAlloc(hHeap, 0, sizeof(PlayerData)*maxPlayers);
+    for(uint32_t i = 0; i<maxPlayers; i++) {
+        serverInst->playerData[i].connection.slotFree = true;
+        serverInst->playerData[i].active = false;
+    }
 
     if(result->ai_family != AF_INET) {
         FreeAddrInfoW(result);

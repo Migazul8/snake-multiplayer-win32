@@ -1,6 +1,8 @@
 #define IDD_SERVERSELECT 1
 #define IDD_SERVERCONNECT 2
 
+#define WM_ENABLECONTROLS WM_APP+67
+
 typedef struct {
 
     SOCKADDR_IN addr;
@@ -25,6 +27,8 @@ typedef struct {
 
     HANDLE hConnectThread;
     ServerConnectArgs args;
+
+    bool showLoadCursor;
 
 }ServerConnectDlgData;
 

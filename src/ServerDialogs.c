@@ -101,7 +101,7 @@ INT_PTR ServerCreateDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     WCHAR buffer[512];
                     switch(ret) {
                         case 3:
-                            MessageBoxW(NULL, L"Couldn't bind AF_INET socket, shit could crash at any moment", appName, MB_ICONWARNING);
+                            MessageBoxW(NULL, L"Couldn't bind AF_INET socket, program could crash at any moment", appName, MB_ICONWARNING);
                         case 0:
                             EndDialog(hWnd, IDOK);
                             break;
@@ -114,7 +114,7 @@ INT_PTR ServerCreateDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         case 2:
                             switch(wsaErr) {
                                 case WSAEADDRINUSE:
-                                    MessageBoxW(hWnd, L"Port in use.\nUse other or terminate shit programs", appName, MB_ICONERROR);
+                                    MessageBoxW(hWnd, L"Port in use.\nUse other or terminate other programs", appName, MB_ICONERROR);
                                     break;
 
                                 default:
