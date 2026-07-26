@@ -7,6 +7,8 @@ typedef struct {
 
         bool slotFree;
 
+        bool online;
+
     }connection;
 
     uint64_t points;

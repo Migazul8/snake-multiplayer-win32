@@ -64,6 +64,7 @@ void addPlayer(JoinRequestPacket* jr, ServerInstance* serverInst, SOCKADDR_IN* a
 
     if(serverInst->hasGameStarted) {
         ja->returnCode = 1;
+        return;
     }
 
     if(serverInst->currentPlayerCount >= serverInst->maxPlayers) {
@@ -75,7 +76,7 @@ void addPlayer(JoinRequestPacket* jr, ServerInstance* serverInst, SOCKADDR_IN* a
         if(serverInst->playerData[i].connection.slotFree) {
             ja->returnCode = 0;
             ja->playerID = i;
-            ja->secretNumber = 67;
+            ja->secretNumber = (((GetTickCount())*serverInst->currentPlayerCount)%213211)*serverInst->gridH;
             serverInst->playerData[i].connection.addr = *addr;
             serverInst->playerData[i].connection.secretNumber = ja->secretNumber;
 

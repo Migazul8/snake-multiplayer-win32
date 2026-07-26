@@ -2,7 +2,7 @@
 1785064572 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\gameclient.c
 	"Snake.h"
 
-1785064863 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\gameserver.c
+1785066482 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\gameserver.c
 	"Snake.h"
 
 1784933589 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\resource.rc
@@ -50,7 +50,7 @@
 	"SnakeClient.h"
 	"ClientDialogs.h"
 
-1785063857 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeserver.h
+1785066867 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeserver.h
 
 1785063390 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeclient.h
 
@@ -63,7 +63,7 @@
 
 1784978061 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakepackets.h
 
-1784987646 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\serverdialogs.c
+1785066319 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\serverdialogs.c
 	"Snake.h"
 
 1784984607 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\serverdialogs.h
