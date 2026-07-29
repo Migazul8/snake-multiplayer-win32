@@ -1,27 +1,28 @@
 # depslib dependency file v1.0
-1785064572 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\gameclient.c
+1785357971 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\gameclient.c
 	"Snake.h"
 
-1785066482 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\gameserver.c
+1785157666 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\gameserver.c
 	"Snake.h"
 
-1784933589 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\resource.rc
+1785147992 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\resource.rc
 	<winres.h>
 	<Windows.h>
 	"ServerDialogs.h"
 	"serverDialog.rc"
 	"serverVersion.rc"
+	"serverString.rc"
 	"ClientDialogs.h"
-	"clientString.rc"
 	"clientDialog.rc"
 	"clientVersion.rc"
+	"clientString.rc"
 
-1785011112 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\serverdialog.rc
+1785156774 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\serverdialog.rc
 
 1784293756 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\serverversion.rc
 	<winver.h>
 
-1785065888 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\clientdialog.rc
+1785154577 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\clientdialog.rc
 
 1784903254 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\clientversion.rc
 	<winver.h>
@@ -29,17 +30,16 @@
 1784929122 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakepackets.c
 	"Snake.h"
 
-1785013301 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeserver.c
+1785147781 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeserver.c
 	"Snake.h"
 
-1785065762 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\clientdialogs.c
+1785356850 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\clientdialogs.c
 	"Snake.h"
 
-1784988309 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snake.h
+1785158287 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snake.h
 	<WinSock2.h>
 	<CommCtrl.h>
 	<Uxtheme.h>
-	<Richedit.h>
 	<stdint.h>
 	<stdbool.h>
 	<stdio.h>
@@ -50,21 +50,23 @@
 	"SnakeClient.h"
 	"ClientDialogs.h"
 
-1785066867 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeserver.h
+1785159217 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeserver.h
 
-1785063390 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeclient.h
+1785355412 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeclient.h
 
-1785065034 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\clientdialogs.h
+1785357407 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\clientdialogs.h
 
-1784988618 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeclient.c
+1785158466 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakeclient.c
 	"Snake.h"
 
-1785065825 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\clientstring.rc
+1785162084 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\clientstring.rc
 
 1784978061 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\snakepackets.h
 
-1785066319 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\serverdialogs.c
+1785156723 source:c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\serverdialogs.c
 	"Snake.h"
 
-1784984607 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\serverdialogs.h
+1785147781 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\src\serverdialogs.h
+
+1785156586 c:\users\miguel y diana\documents\c proyects\snake-multiplayer-win32\res\serverstring.rc
 

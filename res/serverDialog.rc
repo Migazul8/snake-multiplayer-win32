@@ -11,7 +11,7 @@ BEGIN
     CONTROL "Port:", -1, "Static", SS_LEFT, 24, 20, 50, 9
     CONTROL "29349", 101, "Edit", WS_TABSTOP | ES_NUMBER, 106, 20, 28, 12, WS_EX_CLIENTEDGE
 
-    CONTROL "Show server in &LAN searches", 104, "Button", BS_AUTOCHECKBOX | WS_TABSTOP | WS_DISABLED, 24, 40, 110, 9
+    CONTROL "Show server in &LAN searches", 104, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 40, 110, 9
 
 
     CONTROL "Security", -1, "Button", BS_GROUPBOX, 12, 67, 135, 60
@@ -70,7 +70,7 @@ BEGIN
     CONTROL "Puerto:", -1, "Static", SS_LEFT, 24, 20, 50, 9
     CONTROL "29349", 101, "Edit", WS_TABSTOP | ES_NUMBER, 106, 20, 28, 12, WS_EX_CLIENTEDGE
 
-    CONTROL "Show server in &LAN searches", 104, "Button", BS_AUTOCHECKBOX | WS_TABSTOP | WS_DISABLED, 24, 40, 110, 9
+    CONTROL "Mostrar servidor en &LAN", 104, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 24, 40, 110, 9
 
 
     CONTROL "Seguridad", -1, "Button", BS_GROUPBOX, 12, 67, 135, 60

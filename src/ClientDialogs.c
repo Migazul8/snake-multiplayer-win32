@@ -7,6 +7,10 @@ static WCHAR ipText[32];
 
 static WCHAR connClosedText[256];
 static WCHAR timedOutText[128];
+static WCHAR invalidResponseText[128];
+static WCHAR invalidPortText[128];
+
+static INT_PTR handleSysViewNotify(NMHDR* hdr, ServerSelectDlgData* dlgData, HWND hWnd);
 
 extern HINSTANCE hInstance;
 extern HANDLE hHeap;
@@ -19,6 +23,15 @@ extern pSystemParametersInfoForDpi SystemParametersInfoForDpiPtr;
 extern pGetSystemMetricsForDpi GetSystemMetricsForDpiPtr;
 
 static HCURSOR hLoadCursor;
+
+static HMODULE hUxtheme = NULL;
+static pSetWindowTheme SetWindowThemePtr = NULL;
+
+INT_PTR CALLBACK LobbyWaitDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+
+    return FALSE;
+
+}
 
 INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
@@ -96,7 +109,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                             break;
 
                         default:
-                            MessageBoxW(hWnd, L"Invalid server response", appName, MB_ICONERROR);
+                            MessageBoxW(hWnd, invalidResponseText, appName, MB_ICONERROR);
                             break;
                     }
                     break;
@@ -117,7 +130,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                             break;
 
                         case 10054:
-                            MessageBoxW(hWnd, L"Connection closed", appName, MB_ICONERROR);
+                            MessageBoxW(hWnd, connClosedText, appName, MB_ICONERROR);
                             EndDialog(hWnd, IDCANCEL);
                             break;
 
@@ -130,7 +143,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                     break;
 
                 case 4:
-                    MessageBoxW(hWnd, L"invalid responseeeee", appName, MB_ICONERROR);
+                    MessageBoxW(hWnd, invalidResponseText, appName, MB_ICONERROR);
                     break;
 
             }
@@ -161,6 +174,9 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                     swprintf_s(buffer, 512, L"%ux%u", sip->gridW, sip->gridH);
                     SetDlgItemTextW(hWnd, 106, buffer);
 
+                    swprintf_s(buffer, 512, L"%u", sip->initialLenght);
+                    SetDlgItemTextW(hWnd, 107, buffer);
+
                     SendMessageW(hWnd, WM_ENABLECONTROLS, 0, TRUE);
 
                     return TRUE;
@@ -186,7 +202,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                             break;
 
                         case WSAEMSGSIZE:
-                            MessageBoxW(hWnd, L"Invalid response", appName, MB_ICONERROR);
+                            MessageBoxW(hWnd, invalidResponseText, appName, MB_ICONERROR);
                             break;
 
                         default:
@@ -198,7 +214,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                     break;
 
                 case 4:
-                    MessageBoxW(hWnd, L"Invalid server response", appName, MB_ICONERROR);
+                    MessageBoxW(hWnd, invalidResponseText, appName, MB_ICONERROR);
                     break;
 
 
@@ -223,6 +239,8 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
             EnableWindow(GetDlgItem(hWnd, 104), lParam);
             EnableWindow(GetDlgItem(hWnd, 206), lParam);
             EnableWindow(GetDlgItem(hWnd, 106), lParam);
+            EnableWindow(GetDlgItem(hWnd, 207), lParam);
+            EnableWindow(GetDlgItem(hWnd, 107), lParam);
             return TRUE;
 
         case WM_SETCURSOR:
@@ -252,11 +270,16 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             dlgData->lanGameCount = 0;
             dlgData->serverConn = (ServerConnection*)lParam;
 
+            dlgData->lanThreadArgs.hWnd = hWnd;
+            dlgData->lanThreadArgs.socket = &dlgData->lanSearchSocket;
+
             SetWindowLongPtrW(hWnd, GWLP_USERDATA, dlgData);
 
             SendDlgItemMessageW(hWnd, 111, IPM_SETADDRESS, 0, MAKEIPADDRESS(127, 0, 0, 1));
 
             SendDlgItemMessageW(hWnd, 112, EM_SETCUEBANNER, TRUE, (LPARAM)L"29349");
+
+            SendDlgItemMessageW(hWnd, 110, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_DOUBLEBUFFER | LVS_EX_FULLROWSELECT);
 
             UINT dpi;
 
@@ -279,6 +302,13 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                 col.cx = MulDiv(55, dpi, USER_DEFAULT_SCREEN_DPI);
             SendDlgItemMessageW(hWnd, 110, LVM_INSERTCOLUMNW, 1, (LPARAM)&col);
 
+            if(hUxtheme) {
+                SetWindowTheme(GetDlgItem(hWnd, 110), L"Explorer", NULL);
+            }
+
+            dlgData->lanSearchSocket = INVALID_SOCKET;
+            dlgData->hLanSearchThread = NULL;
+
             SetTimer(hWnd, 10, 3000, NULL);
             SendMessageW(hWnd, WM_TIMER, 10, NULL);
 
@@ -292,7 +322,7 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
                     GetDlgItemTextW(hWnd, 112, portBuffer, 8);
                     int iPort = _wtoi(portBuffer);
                     if(iPort < 1024 || iPort > 49151) {
-                        MessageBoxW(hWnd, L"invalid port", appName, MB_ICONERROR);
+                        MessageBoxW(hWnd, invalidPortText, appName, MB_ICONERROR);
                         return FALSE;
                     }
 
@@ -315,7 +345,61 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             }
             break;
 
+
+        case WM_TIMER:
+            if(wParam == 10) {
+
+                if(dlgData->lanSearchSocket == INVALID_SOCKET) {
+                    TerminateThread(dlgData->hLanSearchThread, 0);
+                    closesocket(dlgData->lanSearchSocket);
+                    dlgData->lanGameCount = 0;
+                    SendDlgItemMessageW(hWnd, 110, LVM_SETITEMCOUNT, dlgData->lanGameCount, 0);
+                    dlgData->hLanSearchThread = CreateThread(NULL, 0, LanPeekerThreadEntry, &dlgData->lanThreadArgs, 0, NULL);
+                }
+
+
+
+                return TRUE;
+            }
+            break;
+
+        case WM_ADDLANGAME: {
+
+            if(dlgData->lanGameCount >= 32) return TRUE;
+
+            LanGame* lanGame = (LanGame*)lParam;
+
+            dlgData->lanGames[dlgData->lanGameCount].addr = lanGame->addr;
+
+            swprintf_s(dlgData->lanGames[dlgData->lanGameCount].ipText, 32, L"%u.%u.%u.%u", lanGame->addr.sin_addr.s_net,
+                                                   lanGame->addr.sin_addr.s_host,
+                                                   lanGame->addr.sin_addr.s_lh,
+                                                   lanGame->addr.sin_addr.s_impno);
+
+            swprintf_s(dlgData->lanGames[dlgData->lanGameCount].portText, 8, L"%u", ntohs(lanGame->addr.sin_port));
+
+            dlgData->lanGameCount++;
+            SendDlgItemMessageW(hWnd, 110, LVM_SETITEMCOUNT, dlgData->lanGameCount, 0);
+
+
+        }
+            return TRUE;
+
+        case WM_NOTIFY: {
+            if(((NMHDR*)lParam)->idFrom == 110) {
+                return handleSysViewNotify((NMHDR*)lParam, dlgData, hWnd);
+            }
+        }
+
+            break;
+
         case WM_DESTROY:
+
+            if(dlgData->lanSearchSocket != INVALID_SOCKET) {
+                TerminateThread(dlgData->hLanSearchThread, 0);
+                closesocket(dlgData->lanSearchSocket);
+            }
+
             HeapFree(hHeap, 0, dlgData);
             KillTimer(hWnd, 10);
             return TRUE;
@@ -325,11 +409,65 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
 
 }
 
+static INT_PTR handleSysViewNotify(NMHDR* hdr, ServerSelectDlgData* dlgData, HWND hWnd) {
+    NMITEMACTIVATE* ia = (NMITEMACTIVATE*)hdr;
+    NMLVDISPINFOW* dispInfo = (NMLVDISPINFOW*)hdr;
+    switch(hdr->code) {
+        case LVN_GETDISPINFOW:
+            NMLVDISPINFOW* dispInfo = (NMLVDISPINFOW*)hdr;
+            switch(dispInfo->item.iSubItem) {
+                case 0:
+                    dispInfo->item.pszText = dlgData->lanGames[dispInfo->item.iItem].ipText;
+
+                    return TRUE;
+
+                case 1:
+                    dispInfo->item.pszText = dlgData->lanGames[dispInfo->item.iItem].portText;
+                    return TRUE;
+            }
+
+            break;
+
+        case NM_CLICK:
+            if(ia->iItem < 0) break;
+        case LVN_ITEMACTIVATE:
+            if(ia->iItem >= dlgData->lanGameCount) break;
+
+            dlgData->serverConn->addr = dlgData->lanGames[ia->iItem].addr;
+
+            if(DialogBoxParamW(hInstance, MAKEINTRESOURCEW(IDD_SERVERCONNECT), hWnd, ServerConnectDlgProc, dlgData->serverConn) == IDOK) {
+                EndDialog(hWnd, IDOK);
+            }
+
+            return TRUE;
+    }
+
+    return FALSE;
+}
+
 void loadDialogStrings(HINSTANCE hInstance) {
 
     LoadStringW(hInstance, 1, portText, 16);
     LoadStringW(hInstance, 2, ipText, 32);
     LoadStringW(hInstance, 3, connClosedText, 256);
     LoadStringW(hInstance, 4, timedOutText, 128);
+    LoadStringW(hInstance, 5, invalidResponseText, 128);
+    LoadStringW(hInstance, 6, invalidPortText, 128);
+
+}
+
+void loadUxthemeProcs() {
+
+    hUxtheme = LoadLibraryW(L"uxtheme.dll");
+    if(hUxtheme) {
+        SetWindowThemePtr = (pSetWindowTheme)GetProcAddress(hUxtheme, "SetWindowTheme");
+    }
+}
+
+void unloadUxtheme() {
+
+    if(hUxtheme) {
+        FreeLibrary(hUxtheme);
+    }
 
 }

@@ -9,6 +9,8 @@ void serverMain() {
 
     hInstance = GetModuleHandleW(NULL);
 
+    loadDialogsStrings(hInstance);
+
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 

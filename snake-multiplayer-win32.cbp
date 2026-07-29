@@ -95,6 +95,11 @@
 			<Option compile="0" />
 			<Option link="0" />
 		</Unit>
+		<Unit filename="res/serverString.rc">
+			<Option compilerVar="WINDRES" />
+			<Option compile="0" />
+			<Option link="0" />
+		</Unit>
 		<Unit filename="res/serverVersion.rc">
 			<Option compilerVar="WINDRES" />
 			<Option compile="0" />

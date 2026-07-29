@@ -1,5 +1,15 @@
 typedef struct {
 
+    SOCKET socket;
+
+    HANDLE hThread;
+
+    WCHAR port[8];
+
+}LanBroadcastingData;
+
+typedef struct {
+
     struct {
         int64_t secretNumber;
 
@@ -11,6 +21,10 @@ typedef struct {
 
     }connection;
 
+    char playerName[32];
+
+    int32_t color;
+
     uint64_t points;
 
     uint32_t bodyLenght;
@@ -19,7 +33,7 @@ typedef struct {
         int32_t y;
     } bodyParts[1024];
 
-    bool active;
+    bool alive;
 
 }PlayerData;
 
@@ -42,10 +56,14 @@ typedef struct {
     uint32_t playerDataLenght;
     PlayerData* playerData;
 
+    uint32_t initialPlayerLenght;
+
     bool hasGameStarted;
 
     char serverName[64];
     WCHAR wServerName[64];
+
+    LanBroadcastingData lanBrdcstData;
 
 }ServerInstance;
 

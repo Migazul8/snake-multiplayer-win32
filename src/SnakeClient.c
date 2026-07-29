@@ -25,6 +25,7 @@ void clientMain() {
     hHeap = GetProcessHeap();
 
     loadDialogStrings(hInstance);
+    loadUxthemeProcs();
 
     loadDPIProcs();
 
@@ -32,10 +33,15 @@ void clientMain() {
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
     if(DialogBoxParamW(hInstance, MAKEINTRESOURCEW(IDD_SERVERSELECT), NULL, ServerSelectDlgProc, &gameInst.serverConn) == IDOK) {
-        MessageBoxW(NULL, L"ok", L"dd", MB_ICONINFORMATION);
+        if(DialogBoxParamW(hInstance, MAKEINTRESOURCEW(IDD_LOBBYWAIT), NULL, LobbyWaitDlgProc, &gameInst.serverConn) == IDOK) {
+            MessageBoxW(NULL, L"ww", appName, MB_ICONQUESTION);
+            //GAME
+        }
     }
 
     WSACleanup();
+
+    unloadUxtheme();
 
     ExitProcess(0);
 

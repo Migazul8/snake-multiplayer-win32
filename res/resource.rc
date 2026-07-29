@@ -1,18 +1,20 @@
 #include <winres.h>
 #include <Windows.h>
 
+1 RT_MANIFEST "manifest.xml"
+
 #ifdef BUILD_SERVER
 #include "ServerDialogs.h"
 #include "serverDialog.rc"
 #include "serverVersion.rc"
+#include "serverString.rc"
 #else
 #include "ClientDialogs.h"
-#include "clientString.rc"
 #include "clientDialog.rc"
 #include "clientVersion.rc"
+#include "clientString.rc"
 
 1 PNG "apple.png"
 
 #endif // BUILD_SERVER
 
-1 RT_MANIFEST "manifest.xml"

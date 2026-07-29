@@ -4,7 +4,6 @@
 #include <WinSock2.h>
 #include <CommCtrl.h>
 #include <Uxtheme.h>
-#include <Richedit.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>

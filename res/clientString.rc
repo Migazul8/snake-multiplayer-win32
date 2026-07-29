@@ -4,8 +4,10 @@ BEGIN
 
     1, "Port"
     2, "IPv4 address"
-    3, "The remote computer closed the connection.\nCheck the IP address and port introduced and try again later."
-    4, "The server didn't respond.\nCheck the IP adress and port introduced and try again."
+    3, "The remote computer closed the connection, so there is no server running there in the provided port or a firewall is in you way.\nCheck the IP address and port introduced and try again later."
+    4, "The server didn't respond.\nCheck the IP address and port introduced and try again."
+    5, "Invalid response by the server."
+    6, "Invalid port.\nIntroduce a value in the range 1024-49151."
 
 END
 
@@ -15,7 +17,9 @@ BEGIN
 
     1, "Puerto"
     2, "Dirección IPv4"
-    3, "La conexión fue cerrada por el equipo remoto.\nComprueba la dirección IP y el puerto introducidos e inténtalo de nuevo más tarde."
+    3, "La conexión fue cerrada por el equipo remoto, así que no hay servidor ejecutándose allí en el puerto dado o hay un firewall bloqueando.\nComprueba la dirección IP y el puerto introducidos e inténtalo de nuevo más tarde."
     4, "El servidor no respondió.\nComprueba la dirección IP y el puerto introducidos e inténtalo de nuevo."
+    5, "Respuesta inválida del servidor."
+    6, "Puerto inválido.\nIntroduce un valor en el rango 1024-49151."
 
 END

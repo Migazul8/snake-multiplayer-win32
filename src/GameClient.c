@@ -1,5 +1,29 @@
 #include "Snake.h"
 
+void sendDirChange(ServerConnection* serverConn, char newDir) {
+
+    DirChangePacket dcp;
+    initPacket(&dcp.gp, GP_CHANGEPLAYERDIR);
+
+    dcp.newDir = (uint8_t)newDir;
+    dcp.playerID = serverConn->myPlayerID;
+    dcp.secretNumber = serverConn->secretNumber;
+
+    sendto(serverConn->clientSocket, &dcp, sizeof(DirChangePacket), 0, &serverConn->addr, sizeof(SOCKADDR_IN));
+
+}
+
+void leaveServer(ServerConnection* serverConn) {
+
+    LeavePacket lp;
+    initPacket(&lp.gp, GP_LEAVESERVER);
+
+    lp.playerID = serverConn->myPlayerID;
+    lp.secretNumber = serverConn->secretNumber;
+
+    sendto(serverConn->clientSocket, &lp, sizeof(LeavePacket), 0, &serverConn->addr, sizeof(SOCKADDR_IN));
+
+}
 
 DWORD WINAPI ServerJoinThreadEntry(ServerConnectArgs* args) {
 
@@ -45,6 +69,49 @@ DWORD WINAPI ServerJoinThreadEntry(ServerConnectArgs* args) {
 
     timeout = 0;
     setsockopt(args->serverConn->clientSocket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(DWORD));
+
+    return 0;
+
+}
+
+DWORD WINAPI LanPeekerThreadEntry(LanPeekThreadArgs* args) {
+
+    *args->socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if(socket == INVALID_SOCKET) return 0;
+
+    DWORD timeout = 3500;
+    setsockopt(*args->socket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(DWORD));
+
+    SOCKADDR_IN addr;
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(29350);
+    addr.sin_addr.s_addr = htonl(MAKEIPADDRESS(255, 255, 255, 255));
+
+    BOOL broadcasting = TRUE;
+    setsockopt(*args->socket, SOL_SOCKET, SO_BROADCAST, &broadcasting, sizeof(BOOL));
+
+    SOCKADDR_IN fromAddr;
+    int fromAddrSize = sizeof(SOCKADDR_IN);
+
+    GamePacket gp;
+    initPacket(&gp, GP_LANPEEK);
+
+    sendto(*args->socket, &gp, sizeof(GamePacket), 0, &addr, sizeof(SOCKADDR_IN));
+
+    LanGame lanGame;
+
+    LanPeekAnswer lpa;
+    while(recvfrom(*args->socket, &lpa, sizeof(LanPeekAnswer), 0, &fromAddr, &fromAddrSize) != SOCKET_ERROR) {
+        if(isPacketValid(&lpa.gp)) {
+            if(lpa.gp.type == GP_LANPEEK) {
+                lanGame.addr = fromAddr;
+                lanGame.addr.sin_port = lpa.port;
+                SendMessageW(args->hWnd, WM_ADDLANGAME, 0, &lanGame);
+            }
+        }
+    }
+
+    *args->socket = INVALID_SOCKET;
 
     return 0;
 
