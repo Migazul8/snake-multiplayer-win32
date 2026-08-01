@@ -24,10 +24,11 @@ void handlePacket(GamePacket* gp, SOCKADDR_IN* fromAddr, ServerInstance* serverI
 
             ServerInfoPacket sip;
             initPacket(&sip.gp, GP_SERVERINFO);
+            sip.currentPlayerCount = serverInst->currentPlayerCount;
             sip.gridW = serverInst->gridW;
             sip.gridH = serverInst->gridH;
             sip.maxPlayers = serverInst->maxPlayers;
-            sip.playersGrow = sip.playersGrow;
+            sip.playersGrow = (uint8_t)serverInst->playersGrow;
             sip.initialLenght = serverInst->initialPlayerLenght;
             strcpy_s(sip.serverName, 64, serverInst->serverName);
 
@@ -89,6 +90,8 @@ void addPlayer(JoinRequestPacket* jr, ServerInstance* serverInst, SOCKADDR_IN* a
             ja->secretNumber = (((GetTickCount())*serverInst->currentPlayerCount)%213211)*serverInst->gridH;
             serverInst->playerData[i].connection.addr = *addr;
             serverInst->playerData[i].connection.secretNumber = ja->secretNumber;
+            serverInst->playerData[i].connection.slotFree = false;
+            serverInst->playerData[i].connection.online = true;
 
             strcpy_s(serverInst->playerData[i].playerName, 32, jr->playerName);
 
@@ -114,6 +117,7 @@ void removePlayer(LeavePacket* lp, ServerInstance* serverInst) {
     PlayerData* player = &serverInst->playerData[lp->playerID];
 
     if(lp->secretNumber == player->connection.secretNumber) {
+        if(player->connection.slotFree) return;
         player->connection.online = false;
         player->connection.slotFree = true;
         player->alive = false;
@@ -197,6 +201,8 @@ int createServer(ServerInstance* serverInst, WCHAR* port, bool lanVisibility, WC
     serverInst->gridH = gridH;
 
     serverInst->initialPlayerLenght = initialLenght;
+
+    serverInst->playersGrow = growing;
 
     serverInst->hasGameStarted = FALSE;
 

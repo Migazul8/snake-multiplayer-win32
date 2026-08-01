@@ -1,5 +1,7 @@
 #include "Snake.h"
 
+#include "winerror.h"
+
 extern WCHAR* appName;
 
 static WCHAR portText[16];
@@ -29,6 +31,32 @@ static pSetWindowTheme SetWindowThemePtr = NULL;
 
 INT_PTR CALLBACK LobbyWaitDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
+    ServerConnection* serverConn = (ServerConnection*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
+
+    switch(msg) {
+        case WM_INITDIALOG:
+            serverConn = (ServerConnection*)lParam;
+            SetWindowLongPtrW(hWnd, GWLP_USERDATA, serverConn);
+
+            return TRUE;
+
+
+        case WM_COMMAND:
+            switch(LOWORD(wParam)) {
+                case IDCLOSE:
+                    leaveServer(serverConn);
+                    EndDialog(hWnd, IDCLOSE);
+                    return TRUE;
+            }
+
+            break;
+
+        case WM_CLOSE:
+            leaveServer(serverConn);
+            EndDialog(hWnd, IDCLOSE);
+            return TRUE;
+
+    }
     return FALSE;
 
 }
@@ -91,6 +119,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
         case WM_SERVERJOINDONE: {
             dlgData->showLoadCursor = false;
             ShowWindow(GetDlgItem(hWnd, 130), SW_HIDE);
+            SendMessageW(hWnd, WM_ENABLECONTROLS, 0, TRUE);
             WCHAR buffer[512];
             switch(wParam) {
                 case 0:
@@ -135,6 +164,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                             break;
 
                         default:
+
                             swprintf_s(buffer, 512, L"Error %d while recieving data", lParam);
                             MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
                             break;
@@ -165,10 +195,10 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
                     SetDlgItemTextW(hWnd, 101, buffer);
 
-                    swprintf_s(buffer, 512, L"%u", sip->maxPlayers);
+                    swprintf_s(buffer, 512, L"%u/%u", sip->currentPlayerCount, sip->maxPlayers);
                     SetDlgItemTextW(hWnd, 103, buffer);
 
-                    swprintf_s(buffer, 512, L"%u", sip->currentPlayerCount);
+                    swprintf_s(buffer, 512, L"%u", sip->playersGrow);
                     SetDlgItemTextW(hWnd, 104, buffer);
 
                     swprintf_s(buffer, 512, L"%ux%u", sip->gridW, sip->gridH);

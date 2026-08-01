@@ -58,6 +58,8 @@ typedef struct {
 
     uint32_t initialPlayerLenght;
 
+    bool playersGrow;
+
     bool hasGameStarted;
 
     char serverName[64];
