@@ -70,6 +70,8 @@
 			<Add library="uxtheme" />
 			<Add library="comctl32" />
 			<Add library="ucrt" />
+			<Add library="shlwapi" />
+			<Add library="ole32" />
 		</Linker>
 		<Unit filename="res/clientDialog.rc">
 			<Option compilerVar="WINDRES" />

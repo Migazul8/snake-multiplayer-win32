@@ -52,8 +52,8 @@ BEGIN
     CONTROL "", 502, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
 
 
-    CONTROL "&OK", IDOK, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_GROUP, 243, 161, 48, 13
-    CONTROL "&Cancel", IDCANCEL, "Button", BS_PUSHBUTTON, 297, 161, 48, 13
+    CONTROL "&OK", IDOK, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_GROUP, 243, 159, 48, 13
+    CONTROL "&Cancel", IDCANCEL, "Button", BS_PUSHBUTTON, 297, 159, 48, 13
 
 END
 
@@ -111,8 +111,8 @@ BEGIN
     CONTROL "", 502, "msctls_updown32", UDS_NOTHOUSANDS | UDS_ALIGNRIGHT | UDS_SETBUDDYINT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 0, 0, 0, 0
 
 
-    CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_GROUP, 243, 161, 48, 13
-    CONTROL "&Cancelar", IDCANCEL, "Button", BS_PUSHBUTTON, 297, 161, 48, 13
+    CONTROL "&Aceptar", IDOK, "Button", BS_DEFPUSHBUTTON | WS_TABSTOP | WS_GROUP, 243, 159, 48, 13
+    CONTROL "&Cancelar", IDCANCEL, "Button", BS_PUSHBUTTON, 297, 159, 48, 13
 
 END
 
@@ -125,6 +125,10 @@ BEGIN
 
     CONTROL "Status", -1, "Button", BS_GROUPBOX, 12, 12, 160, 100
     //CONTROL "Jugadores:", -1, "Static", SS_LEFT, 200, 12, 100, 9
+    CONTROL "Connected players:", -1, "Static", SS_LEFT, 24, 30, 100, 9
+    CONTROL "-/-", 201, "Static", SS_RIGHT, 120, 30, 40, 9
+
+    CONTROL "Game info", -1, "Button", BS_GROUPBOX, 200, 12, 160, 100
 
     CONTROL "&Start game", 101, "Button", BS_PUSHBUTTON | WS_TABSTOP, 12, 150, 56, 14
 
@@ -132,9 +136,7 @@ BEGIN
 
     //CONTROL "", 200, "SysListView32", LVS_REPORT, 200, 24, 100, 100, WS_EX_CLIENTEDGE
 
-    CONTROL "-/-", 201, "Static", SS_RIGHT, 120, 30, 40, 9
 
-    CONTROL "Connected players:", -1, "Static", SS_LEFT, 24, 30, 100, 9
 
 
 END

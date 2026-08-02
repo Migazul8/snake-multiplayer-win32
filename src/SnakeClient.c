@@ -21,6 +21,8 @@ static void loadDPIProcs();
 
 void clientMain() {
 
+    CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+
     hInstance = GetModuleHandleW(NULL);
     hHeap = GetProcessHeap();
 
@@ -33,7 +35,7 @@ void clientMain() {
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
     if(DialogBoxParamW(hInstance, MAKEINTRESOURCEW(IDD_SERVERSELECT), NULL, ServerSelectDlgProc, &gameInst.serverConn) == IDOK) {
-        if(DialogBoxParamW(hInstance, MAKEINTRESOURCEW(IDD_LOBBYWAIT), NULL, LobbyWaitDlgProc, &gameInst.serverConn) == IDOK) {
+        if(DialogBoxParamW(hInstance, MAKEINTRESOURCEW(IDD_LOBBYWAIT), NULL, LobbyWaitDlgProc, &gameInst) == IDOK) {
             MessageBoxW(NULL, L"ww", appName, MB_ICONQUESTION);
             //GAME
         }

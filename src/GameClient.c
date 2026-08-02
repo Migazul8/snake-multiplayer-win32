@@ -1,5 +1,13 @@
 #include "Snake.h"
 
+DWORD WINAPI GameClientThreadEntry(GameInstance* game) {
+
+
+
+    return 0;
+
+}
+
 void sendDirChange(ServerConnection* serverConn, char newDir) {
 
     DirChangePacket dcp;
@@ -38,7 +46,7 @@ DWORD WINAPI ServerJoinThreadEntry(ServerConnectArgs* args) {
     initPacket(&jr.gp, GP_JOINREQUEST);
 
     jr.playerColor = args->playerColor;
-    WideCharToMultiByte(CP_UTF8, 0, args->playerName, -1, jr.playerName, 32, NULL, NULL);
+    WideCharToMultiByte(CP_UTF8, 0, args->playerName, -1, jr.playerName, 16, NULL, NULL);
 
     DWORD timeout = 7500;
     setsockopt(args->serverConn->clientSocket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(DWORD));
@@ -79,7 +87,7 @@ DWORD WINAPI LanPeekerThreadEntry(LanPeekThreadArgs* args) {
     *args->socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if(socket == INVALID_SOCKET) return 0;
 
-    DWORD timeout = 3500;
+    DWORD timeout = 2000;
     setsockopt(*args->socket, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof(DWORD));
 
     SOCKADDR_IN addr;

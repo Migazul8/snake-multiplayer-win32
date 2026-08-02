@@ -40,7 +40,7 @@ typedef struct {
 
     GamePacket gp;
 
-    char playerName[32];
+    char playerName[16];
 
     int32_t playerColor;
 

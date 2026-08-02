@@ -11,6 +11,13 @@ static WCHAR connClosedText[256];
 static WCHAR timedOutText[128];
 static WCHAR invalidResponseText[128];
 static WCHAR invalidPortText[128];
+static WCHAR gameFullText[128];
+static WCHAR yesText[16];
+static WCHAR noText[16];
+
+static WCHAR blueText[16];
+static WCHAR redText[16];
+static WCHAR greenText[16];
 
 static INT_PTR handleSysViewNotify(NMHDR* hdr, ServerSelectDlgData* dlgData, HWND hWnd);
 
@@ -31,12 +38,14 @@ static pSetWindowTheme SetWindowThemePtr = NULL;
 
 INT_PTR CALLBACK LobbyWaitDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
-    ServerConnection* serverConn = (ServerConnection*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
+    GameInstance* game = (ServerConnection*)GetWindowLongPtrW(hWnd, GWLP_USERDATA);
 
     switch(msg) {
         case WM_INITDIALOG:
-            serverConn = (ServerConnection*)lParam;
-            SetWindowLongPtrW(hWnd, GWLP_USERDATA, serverConn);
+            game = (GameInstance*)lParam;
+            SetWindowLongPtrW(hWnd, GWLP_USERDATA, game);
+
+            game->hGameThread = CreateThread(NULL, 0, GameClientThreadEntry, game, 0, NULL);
 
             return TRUE;
 
@@ -44,7 +53,7 @@ INT_PTR CALLBACK LobbyWaitDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
         case WM_COMMAND:
             switch(LOWORD(wParam)) {
                 case IDCLOSE:
-                    leaveServer(serverConn);
+                    leaveServer(&game->serverConn);
                     EndDialog(hWnd, IDCLOSE);
                     return TRUE;
             }
@@ -52,7 +61,7 @@ INT_PTR CALLBACK LobbyWaitDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPa
             break;
 
         case WM_CLOSE:
-            leaveServer(serverConn);
+            leaveServer(&game->serverConn);
             EndDialog(hWnd, IDCLOSE);
             return TRUE;
 
@@ -73,6 +82,15 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
             dlgData->serverConn = (ServerConnection*)lParam;
 
             SetWindowLongPtrW(hWnd, GWLP_USERDATA, dlgData);
+
+            SendDlgItemMessageW(hWnd, 102, EM_SETLIMITTEXT, 15, 0);
+            SHAutoComplete(GetDlgItem(hWnd, 102), SHACF_AUTOAPPEND_FORCE_OFF | SHACF_AUTOSUGGEST_FORCE_OFF);
+
+            SendDlgItemMessageW(hWnd, 105, CB_ADDSTRING, 0, blueText);
+            SendDlgItemMessageW(hWnd, 105, CB_ADDSTRING, 0, redText);
+            SendDlgItemMessageW(hWnd, 105, CB_ADDSTRING, 0, greenText);
+            SendDlgItemMessageW(hWnd, 105, CB_SETCURSEL, 2, 0);
+
 
             dlgData->args.hWnd = hWnd;
             dlgData->args.serverConn = dlgData->serverConn;
@@ -98,7 +116,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
 
                     dlgData->showLoadCursor = true;
 
-                    GetDlgItemTextW(hWnd, 102, dlgData->args.playerName, 32);
+                    GetDlgItemTextW(hWnd, 102, dlgData->args.playerName, 16);
                     dlgData->args.playerColor = SendDlgItemMessageW(hWnd, 105, CB_GETCURSEL, 0, 0);
 
                     dlgData->hConnectThread = CreateThread(NULL, 0, ServerJoinThreadEntry, &dlgData->args, 0, NULL);
@@ -134,7 +152,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                             break;
 
                         case 2:
-                            MessageBoxW(hWnd, L"Lobby full of lil bros", appName, MB_ICONERROR);
+                            MessageBoxW(hWnd, gameFullText, appName, MB_ICONERROR);
                             break;
 
                         default:
@@ -144,11 +162,11 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                     break;
 
                 case 1:
-                    MessageBoxW(hWnd, L"error creatin socke", appName, MB_ICONERROR);
+                    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, lParam, LANG_NEUTRAL, buffer, 512, NULL);
                     break;
 
                 case 2:
-                    MessageBoxW(hWnd, L"error sendin sock", appName, MB_ICONERROR);
+                    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, lParam, LANG_NEUTRAL, buffer, 512, NULL);
                     break;
 
                 case 3:
@@ -164,8 +182,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                             break;
 
                         default:
-
-                            swprintf_s(buffer, 512, L"Error %d while recieving data", lParam);
+                            FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, lParam, LANG_NEUTRAL, buffer, 512, NULL);
                             MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
                             break;
 
@@ -198,8 +215,11 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                     swprintf_s(buffer, 512, L"%u/%u", sip->currentPlayerCount, sip->maxPlayers);
                     SetDlgItemTextW(hWnd, 103, buffer);
 
-                    swprintf_s(buffer, 512, L"%u", sip->playersGrow);
-                    SetDlgItemTextW(hWnd, 104, buffer);
+                    if(sip->playersGrow) {
+                        SetDlgItemTextW(hWnd, 104, yesText);
+                    }else{
+                        SetDlgItemTextW(hWnd, 104, noText);
+                    }
 
                     swprintf_s(buffer, 512, L"%ux%u", sip->gridW, sip->gridH);
                     SetDlgItemTextW(hWnd, 106, buffer);
@@ -212,12 +232,12 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                     return TRUE;
 
                 case 1:
-                    swprintf_s(buffer, 512, L"Error %d while creating socket", (int)lParam);
+                    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, lParam, LANG_NEUTRAL, buffer, 512, NULL);
                     MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
                     break;
 
                 case 2:
-                    swprintf_s(buffer, 512, L"Error %d while sending request", (int)lParam);
+                    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, lParam, LANG_NEUTRAL, buffer, 512, NULL);
                     MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
                     break;
 
@@ -236,7 +256,7 @@ INT_PTR CALLBACK ServerConnectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                             break;
 
                         default:
-                            swprintf_s(buffer, 512, L"Error %d while receiving server response", (int)lParam);
+                            FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM, NULL, lParam, LANG_NEUTRAL, buffer, 512, NULL);
                             MessageBoxW(hWnd, buffer, appName, MB_ICONERROR);
                             break;
 
@@ -308,6 +328,8 @@ INT_PTR CALLBACK ServerSelectDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM 
             SendDlgItemMessageW(hWnd, 111, IPM_SETADDRESS, 0, MAKEIPADDRESS(127, 0, 0, 1));
 
             SendDlgItemMessageW(hWnd, 112, EM_SETCUEBANNER, TRUE, (LPARAM)L"29349");
+            SendDlgItemMessageW(hWnd, 112, EM_SETLIMITTEXT, 5, 0);
+            SHAutoComplete(GetDlgItem(hWnd, 112), SHACF_AUTOAPPEND_FORCE_OFF | SHACF_AUTOSUGGEST_FORCE_OFF);
 
             SendDlgItemMessageW(hWnd, 110, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_DOUBLEBUFFER | LVS_EX_FULLROWSELECT);
 
@@ -483,7 +505,13 @@ void loadDialogStrings(HINSTANCE hInstance) {
     LoadStringW(hInstance, 4, timedOutText, 128);
     LoadStringW(hInstance, 5, invalidResponseText, 128);
     LoadStringW(hInstance, 6, invalidPortText, 128);
+    LoadStringW(hInstance, 7, gameFullText, 128);
+    LoadStringW(hInstance, 8, blueText, 16);
+    LoadStringW(hInstance, 9, redText, 16);
+    LoadStringW(hInstance, 10, greenText, 16);
 
+    LoadStringW(hInstance, 100, yesText, 16);
+    LoadStringW(hInstance, 101, noText, 16);
 }
 
 void loadUxthemeProcs() {

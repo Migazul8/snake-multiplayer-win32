@@ -11,12 +11,6 @@ static void removePlayer(LeavePacket* lp, ServerInstance* serverInst);
 
 static DWORD WINAPI LanListenerThreadEntry(LanBroadcastingData*);
 
-DWORD WINAPI GameServerThreadEntry(ServerInstance* serverInst) {
-
-    return 0;
-
-}
-
 void handlePacket(GamePacket* gp, SOCKADDR_IN* fromAddr, ServerInstance* serverInst) {
     switch(gp->type) {
         case GP_SERVERINFO:
@@ -93,7 +87,7 @@ void addPlayer(JoinRequestPacket* jr, ServerInstance* serverInst, SOCKADDR_IN* a
             serverInst->playerData[i].connection.slotFree = false;
             serverInst->playerData[i].connection.online = true;
 
-            strcpy_s(serverInst->playerData[i].playerName, 32, jr->playerName);
+            strcpy_s(serverInst->playerData[i].playerName, 16, jr->playerName);
 
             serverInst->currentPlayerCount++;
 

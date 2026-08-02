@@ -48,7 +48,10 @@ INT_PTR ServerCreateDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             SetWindowLongPtrW(hWnd, GWLP_USERDATA, serverInst);
 
             SendDlgItemMessageW(hWnd, 101, EM_SETCUEBANNER, TRUE, L"29349");
+            SendDlgItemMessageW(hWnd, 101, EM_SETLIMITTEXT, 5, 0);
+            SHAutoComplete(GetDlgItem(hWnd, 101), SHACF_AUTOAPPEND_FORCE_OFF | SHACF_AUTOSUGGEST_FORCE_OFF);
             SendDlgItemMessageW(hWnd, 103, EM_SETCUEBANNER, TRUE, L"My sussy server...");
+            SHAutoComplete(GetDlgItem(hWnd, 103), SHACF_AUTOAPPEND_FORCE_OFF | SHACF_AUTOSUGGEST_FORCE_OFF);
 
             SendDlgItemMessageW(hWnd, 102, UDM_SETRANGE32, 1, 999);
             SendDlgItemMessageW(hWnd, 102, UDM_SETPOS32, 0, 5);

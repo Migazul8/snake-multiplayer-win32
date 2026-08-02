@@ -2,6 +2,8 @@
 #define SNAKE_H
 
 #include <WinSock2.h>
+#include <combaseapi.h>
+#include <Shlwapi.h>
 #include <CommCtrl.h>
 #include <Uxtheme.h>
 #include <stdint.h>

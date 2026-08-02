@@ -14,6 +14,8 @@ void serverMain() {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
+    CoInitializeEx(NULL, COINIT_APARTMENTTHREADED);
+
     if(DialogBoxParamW(hInstance, IDD_CREATESERVER, NULL, ServerCreateDlgProc, &serverInst) == IDOK) {
         serverInst.hListenerThread = CreateThread(NULL, 0, PacketListenerThreadEntry, &serverInst, 0, NULL);
         DialogBoxParamW(hInstance, IDD_SERVERPANEL, NULL, ServerPanelDlgProc, &serverInst);

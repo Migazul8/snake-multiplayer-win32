@@ -1,5 +1,6 @@
 #define WM_SERVERCONNECTDONE WM_APP+10
 #define WM_SERVERJOINDONE WM_APP+11
+#define WM_SERVERCLOSED WM_APP+12
 
 #define DEF_TILESIZE 10
 #define DEF_GRIDW 40
@@ -54,9 +55,11 @@ typedef struct {
 
     int32_t playerColor;
 
-    WCHAR playerName[32];
+    WCHAR playerName[16];
 
 }ServerConnectArgs;
+
+DWORD WINAPI GameClientThreadEntry(GameInstance* game);
 
 void sendDirChange(ServerConnection* serverConn, char newDir);
 
